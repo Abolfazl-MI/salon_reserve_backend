@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { validatorMapper } = require("../utils/functions");
+const { validatorMapper } = require("../../utils/functions");
 
 function validateRequest(req,res,next){
     console.log(req.body);
