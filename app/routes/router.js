@@ -1,8 +1,9 @@
 const express = require("express");
-const authRouter = require("./auth/auth.router");
-const userRouter = require("./user/user.router");
-const salonRouter = require("./api/salon.router");
-
+const {authRouter} = require("./auth/auth.router");
+const {userRouter} = require("./user/user.router");
+const {salonRouter} = require("./api/salon.router");
+const {adminRouter} = require("./admin/admin.router");
+const {orderRouter}=require('./api/order.router')
 const router = express.Router();
 
 router.use("/auth", authRouter);
