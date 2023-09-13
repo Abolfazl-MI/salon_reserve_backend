@@ -1,0 +1,412 @@
+
+user model{
+	id
+	phone number
+	name
+	fname 
+	group_name ->optional
+	page_address ->optional
+	email-> optional
+	login_otp_code [auto generate]
+	copun_code -> copun_id optional { copun code should apply for the salon in the our not the all cost}
+	role ['admin','user']
+}
+reserv model{
+	id
+	day -> dateTime
+	times String -> "1-2"
+	status [reserved-full]
+	reserver_id user_model-id
+}
+
+salon model{
+	id
+	name 
+	images [could be multiply]
+	reserv_time [reserv_model]
+	
+	features [String]
+	cost int	
+}
+order model {
+	id
+	user ->user_id
+	salon -> salon_id
+	total_count 
+	status [pending-cancled(after 1 hour of sub must expire unless change from admin)-complited]
+	remained_time: time-stamp 
+}
+copun model {
+	id
+	code // auto gen
+	discount /rquired
+	status [fill-free]
+}
+
+///-------------> routes<-------------
+/// user 
+confrim otp code
+@POST
+public
+/api/v1/auth/confrim-code
+	{
+		phone_number required
+		otp_code	required
+	}
+	response 
+	{
+		status:200
+		profile_status: login/signup,.
+		token
+		copun_model optional
+	}
+
+complete profile
+@POST 
+private
+/api/v1/user/complete-profile
+	{	
+		name required string
+		fname required string
+		email optional string
+		group_name optional string
+		page_addres optional string 
+	
+	}
+	response
+	{
+		status: 200, 400 valdation 500 server
+	}
+get salons
+@GET
+private
+/api/v1/salons
+	response
+	{
+	status:
+	data:  [
+		salon
+		]
+	}
+get salon single 
+@GET 
+private
+/api/v1/salons/single/:id
+	response:
+	{
+		status:200
+		data:salon
+	}
+create order
+@POST
+private
+/api/v1/order/create
+	// coupun after use should be null
+	{
+		//required user_id from token
+		salon_id 
+		total_count	
+		[{day:date_time,hour:'8-9'}] // do for to update salon reseverd times
+		copun_id
+	}
+	response
+	{	
+		status:201	
+	}
+get all order
+@GET 
+private
+/api/v1/order
+	response
+	{
+		status
+		data:[order]
+	}
+	
+get single order
+@GET 
+private
+/api/v1/order/single/:id
+	response
+	{
+		status
+		data:order
+	}
+update order
+@POST 
+private
+/api/v1/order/update
+	{
+		//required user_id from token
+		salon_id required
+		total_count	required
+		copun_id optional
+		[{day:date_time,hour:'8-9'}] // do for to update salon reseverd times required
+		
+	}
+	response
+	{
+		status:200
+	}
+/// admin 
+	@post
+	private
+		/api/v1/admin/create-user
+	Create-user	
+	
+	{
+		name
+		fname
+		email
+		page_addr
+		group_name
+		phone_number required
+		copun_discount int optional
+	}
+	response
+	{
+		status:201
+		created_otp_code
+		phone_number
+		copun_model
+	}
+
+	read all users
+	@GET
+	private
+		/api/v1/admin/users
+	response
+	{
+		status:200
+		data:[user]
+	}
+	single user
+	@GET
+	private
+		/api/v1/admin/users/single/:id
+	response
+	{
+		status:200
+		data:user
+	}
+
+	update user 
+	@POST
+	private
+		/api/v1/admin/users/update
+		{
+			user_id required
+			name optional
+			fname optional
+			email optional
+			page_addr optional
+			group_name optional
+			phone_number optional
+			copun_discount optional
+		}
+		response
+		{
+			status:200
+			data:updateUserData
+		}
+	delete user
+	@delete
+	private
+		/api/v1/admin/users/delete
+	{
+		user_id required
+	}
+	response
+	{
+		status:200
+	}
+
+	create salon
+	@POST
+	private
+		/api/v1/admin/salons/create
+	{
+		name 
+		images [optional]
+		features
+		cost required
+		reserv_time -> default []
+	}
+	response
+	{
+		status:201
+		message:'created salon'
+	}
+
+	get all salons
+	@GET
+	private
+		/api/v1/admin/salons
+		
+		response 
+		{
+			status:200
+			data:[salons]
+		}
+
+	get single salon
+	@GET
+	private
+		/api/v1/admin/salons/single/:id
+	
+	response
+	{
+		status":200
+		data:salon
+	}
+
+	update salon 
+	@POST
+	private
+		/api/v1/admin/salons/update
+	{
+		salon_id required
+		name optional
+		images [optional]
+		features	optional
+		cost required
+		reseve_time
+	}
+	response
+	{
+		status:200
+		message:'updated'
+	}
+
+	delete salon
+	@delete
+	private
+		/api/v1/admin/salons/delete
+	{
+		salon_id required
+	}
+	response
+	{
+		status:200
+	}
+
+	create order
+	@POST
+	private
+		/api/v1/admin/order/create
+	// coupun after use should be null
+	{
+		//required user_id from token
+		salon_id 
+		total_count	
+		copun_id
+		[{day:date_time,hour:'8-9'}] // do for to update salon reseverd times
+	}
+	response
+	{	
+		status:201	
+	}
+	get all order
+	@GET 
+	private
+		/api/v1/admin/order
+	response
+	{
+		status
+		data:[order]
+	}
+	
+	get single order
+	@GET 
+	private
+		/api/v1/admin/order/single/:id
+	response
+	{
+		status
+		data:order
+	}
+	update order
+	@POST 
+	private
+		/api/v1/admin/order/update
+	{
+		//required user_id from token
+		salon_id required
+		total_count	required
+		copun_id optional
+		[{day:date_time,hour:'8-9'}] // do for to update salon reseverd times required
+		
+	}
+	response
+	{
+		status:200
+	}
+	delete
+	@DELETE
+	private
+		/api/v1/admin/order/delete
+		{
+			order_id required
+		}
+		response
+		{
+			status:200
+		}
+	
+	create coupon
+	@POST
+	private
+		/v1/admin/copun/create
+	{
+		discount
+	}
+	response
+	{
+		status:200
+		data:Coupon
+	}
+	read all copun
+	@GET 
+	private
+		/v1/admin/copuns/
+		response
+		{
+			status
+			data:[copun]
+		}
+	read single copun
+	@GET
+	private
+		/v1/admin/coupons/single/:id
+		response
+		{
+			status
+			data:copun
+		}
+	update coupon
+	@POST
+	private
+		/v1/admin/copun/update
+	{
+		discount
+		copun_id
+	}
+	response
+	{
+		status:200
+		data:Coupon
+	}
+	delete coupon
+	@POST
+	private
+		/v1/admin/copun/delete
+	{
+	
+		copun_id
+	}
+	response
+	{
+		status:200
+		
+	}
+
