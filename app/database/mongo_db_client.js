@@ -19,8 +19,13 @@ class DatabaseService {
     return CouponModel.create({
       discount,
       code,
-      
     });
+  }
+  async usersTotalCount() {
+    return UserModel.countDocuments();
+  }
+  async getAllUsers(limit, skip) {
+    return UserModel.find({},{__v:false}).limit(limit).skip(skip);
   }
 }
 

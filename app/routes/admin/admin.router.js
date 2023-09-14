@@ -11,15 +11,20 @@ const {
 } = require("../../http/middlewares/auth.mid");
 const router = express.Router();
 
-router.route("/create-user").post(
-  multer().none(),
-  authMiddleware,
-  authorizeAdmin,
-  createUserValidation(),
-  validateRequest,
-  AdminController.createUserWithPhone
-);
+router
+  .route("/create-user")
+  .post(
+    multer().none(),
+    authMiddleware,
+    authorizeAdmin,
+    createUserValidation(),
+    validateRequest,
+    AdminController.createUserWithPhone
+  );
 
+router
+  .route("/users")
+  .get(authMiddleware, authorizeAdmin, AdminController.getAllUsers);
 module.exports = {
   adminRouter: router,
 };
