@@ -60,14 +60,30 @@ class AdminController {
       next(error);
     }
   }
-  async getSingleUser(req,res,next){
+  async getSingleUser(req, res, next) {
+    try {
+      let user = await DataBaseService.getSingleUser(req.params.id);
+      return res.status(200).json({
+        status: res.statusCode,
+        user,
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async updateUserInfo(req, res, next) {
     try{
-     let user=await DataBaseService.getSingleUser(req.params.id)
-     return res.status(200).json({
-      status:res.statusCode,
-      user
-     })
+      let passed_data=req.body
+      let user_id=passed_data.user_id
+      delete passed_data.user_id
+      let updateUserData=await DataBaseService.updateUserData(passed_data,user_id)
+      return res.status(200).json({
+        statusCode:res.statusCode,
+        message:'user updated',
+        data:updateUserData
+      })
     }catch(e){
+      console.log(e)
       next(e)
     }
   }

@@ -30,6 +30,15 @@ class DatabaseService {
   async getSingleUser(userId) {
     return UserModel.findById(userId);
   }
+  async updateUserData(data, id) {
+    return UserModel.findByIdAndUpdate(
+      id,
+      {
+        $set: data,
+      },
+      { new: true }
+    );
+  }
 }
 
 module.exports = {

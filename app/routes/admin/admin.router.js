@@ -12,10 +12,11 @@ const {
 const {
   getSingleUserValidation,
 } = require("../../http/validations/get-single-user.validation");
+const updateUserValidation = require("../../http/validations/update-user.validation");
 const router = express.Router();
 
 router
-  .route("/create-user")
+  .route("/users/create-user")
   .post(
     multer().none(),
     authMiddleware,
@@ -28,6 +29,7 @@ router
 router
   .route("/users")
   .get(authMiddleware, authorizeAdmin, AdminController.getAllUsers);
+
 router
   .route("/users/single/:id")
   .get(
@@ -37,6 +39,16 @@ router
     validateRequest,
     AdminController.getSingleUser
   );
+
+router.route('/users/update-user').post(
+  multer().none(),
+  authMiddleware,
+  authorizeAdmin,
+  updateUserValidation(),
+  validateRequest,
+  AdminController.updateUserInfo
+)
+
 module.exports = {
   adminRouter: router,
 };
