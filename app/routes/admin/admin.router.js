@@ -13,6 +13,7 @@ const {
   getSingleUserValidation,
 } = require("../../http/validations/get-single-user.validation");
 const updateUserValidation = require("../../http/validations/update-user.validation");
+const deleteUserValidation = require("../../http/validations/delete-user.validation");
 const router = express.Router();
 
 router
@@ -48,7 +49,14 @@ router.route('/users/update-user').post(
   validateRequest,
   AdminController.updateUserInfo
 )
-
+router.route('/users/delete-user').delete(
+  multer().none(),
+  authMiddleware,
+  authorizeAdmin,
+  deleteUserValidation(),
+  validateRequest,
+  AdminController.deleteUserData
+)
 module.exports = {
   adminRouter: router,
 };

@@ -39,6 +39,9 @@ class DatabaseService {
       { new: true }
     );
   }
+  async deleteUser(id) {
+    return UserModel.findByIdAndDelete(id);
+  }
 }
 
 module.exports = {

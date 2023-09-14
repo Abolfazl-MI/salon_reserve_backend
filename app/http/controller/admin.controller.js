@@ -87,6 +87,19 @@ class AdminController {
       next(e)
     }
   }
+  async deleteUserData(req,res,next){
+    try{
+      let {user_id}=req.body
+     await DataBaseService.deleteUser(user_id)
+      return res.status(200).json({
+        status:res.statusCode,
+        message:'deleted user',
+        
+      })
+    }catch(e){
+      next(e)
+    }
+  }
 }
 
 module.exports = {
