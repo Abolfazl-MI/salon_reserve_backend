@@ -70,13 +70,13 @@ function generatePaginationInfo(total_count, limit, page) {
     has_last_page,
     has_next_page,
   };
-  console.log(metadata)
-  return metadata
+  console.log(metadata);
+  return metadata;
 }
 
 module.exports = {
   validatorMapper,
   generateOTP,
   generateCoupon,
-  generatePaginationInfo
+  generatePaginationInfo,
 };

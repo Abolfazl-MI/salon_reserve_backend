@@ -72,32 +72,52 @@ class AdminController {
     }
   }
   async updateUserInfo(req, res, next) {
-    try{
-      let passed_data=req.body
-      let user_id=passed_data.user_id
-      delete passed_data.user_id
-      let updateUserData=await DataBaseService.updateUserData(passed_data,user_id)
+    try {
+      let passed_data = req.body;
+      let user_id = passed_data.user_id;
+      delete passed_data.user_id;
+      // TODO COUPON UPDATE DISCUSS
+      let updateUserData = await DataBaseService.updateUserData(
+        passed_data,
+        user_id
+      );
       return res.status(200).json({
-        statusCode:res.statusCode,
-        message:'user updated',
-        data:updateUserData
-      })
-    }catch(e){
-      console.log(e)
-      next(e)
+        statusCode: res.statusCode,
+        message: "user updated",
+        data: updateUserData,
+      });
+    } catch (e) {
+      console.log(e);
+      next(e);
     }
   }
-  async deleteUserData(req,res,next){
-    try{
-      let {user_id}=req.body
-     await DataBaseService.deleteUser(user_id)
+  async deleteUserData(req, res, next) {
+    try {
+      let { user_id } = req.body;
+      await DataBaseService.deleteUser(user_id);
       return res.status(200).json({
-        status:res.statusCode,
-        message:'deleted user',
-        
-      })
-    }catch(e){
-      next(e)
+        status: res.statusCode,
+        message: "deleted user",
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async createCouponCode(req, res, next) {
+    try {
+      let coupon_code = generateCoupon();
+      let coupon_discount = req.body.coupon_discount;
+      let coupon = await DataBaseService.createCouponCode(
+        coupon_code,
+        coupon_discount
+      );
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        data: coupon,
+      });
+    } catch (e) {
+      next(e);
     }
   }
 }
