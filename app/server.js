@@ -39,9 +39,9 @@ class Application {
       process.exit(1);
     });
     // listen on connection and print connected message
-    mongoose.connection.on('connected',(data)=>{
-        console.log('connected to DB')
-    })
+    mongoose.connection.on("connected", (data) => {
+      console.log("connected to DB");
+    });
     // on SIGINT signal exist
     process.on("SIGINT", () => {
       mongoose.connection.close(() => {
@@ -52,14 +52,20 @@ class Application {
   }
   // error handling
   errorHandler() {
-    this.#app.use((err, req, res, next) => {
+    this.#app.use((req, res, next) => {
       next(createHttpError.NotFound("Not Found"));
     });
     this.#app.use((err, req, res, next) => {
       // server err
       const serverError = createHttpError.InternalServerError();
       const statusCode = err.status || serverError.statusCode;
-      const message = err.message || serverError.message;
+      let message
+      if(process.env.app_state=='dev'){
+        message = err.message || serverError.message
+      }else{
+        console.log(err)
+        message = serverError.message
+      }
       res.status(statusCode).json({
         status: statusCode,
         message,
@@ -71,6 +77,6 @@ class Application {
   }
 }
 
-module.exports={
-    Application
-}
+module.exports = {
+  Application,
+};
