@@ -60,6 +60,17 @@ class AdminController {
       next(error);
     }
   }
+  async getSingleUser(req,res,next){
+    try{
+     let user=await DataBaseService.getSingleUser(req.params.id)
+     return res.status(200).json({
+      status:res.statusCode,
+      user
+     })
+    }catch(e){
+      next(e)
+    }
+  }
 }
 
 module.exports = {

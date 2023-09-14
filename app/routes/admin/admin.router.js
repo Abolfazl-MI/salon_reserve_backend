@@ -9,6 +9,9 @@ const {
   authMiddleware,
   authorizeAdmin,
 } = require("../../http/middlewares/auth.mid");
+const {
+  getSingleUserValidation,
+} = require("../../http/validations/get-single-user.validation");
 const router = express.Router();
 
 router
@@ -25,6 +28,15 @@ router
 router
   .route("/users")
   .get(authMiddleware, authorizeAdmin, AdminController.getAllUsers);
+router
+  .route("/users/single/:id")
+  .get(
+    authMiddleware,
+    authorizeAdmin,
+    getSingleUserValidation(),
+    validateRequest,
+    AdminController.getSingleUser
+  );
 module.exports = {
   adminRouter: router,
 };

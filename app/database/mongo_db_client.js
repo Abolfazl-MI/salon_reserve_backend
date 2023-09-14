@@ -25,7 +25,10 @@ class DatabaseService {
     return UserModel.countDocuments();
   }
   async getAllUsers(limit, skip) {
-    return UserModel.find({},{__v:false}).limit(limit).skip(skip);
+    return UserModel.find({}, { __v: false }).limit(limit).skip(skip);
+  }
+  async getSingleUser(userId) {
+    return UserModel.findById(userId);
   }
 }
 
