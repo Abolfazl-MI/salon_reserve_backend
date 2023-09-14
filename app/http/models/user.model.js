@@ -4,14 +4,15 @@ const userSchema = new mongoose.Schema({
   phone_number: {
     type: String,
     required: true,
+    unique:true
   },
   name: {
     type: String,
-    required: true,
+    default: "",
   },
   family_name: {
     type: String,
-    required: true,
+    default: "",
   },
   group_name: {
     type: String,
