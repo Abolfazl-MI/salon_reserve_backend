@@ -160,6 +160,20 @@ class AdminController {
       next(e);
     }
   }
+  async updateCoupon(req, res, next) {
+    try{
+      let data=req.body
+      let coupon_id=req.body.id
+      delete data.id
+      await DataBaseService.updateCoupon(coupon_id,data)
+      return res.status(200).json({
+        status:res.statusCode,
+        message:"coupon updated"
+      })
+    }catch(e){
+      next(e);
+    }
+  }
 }
 
 module.exports = {

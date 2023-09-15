@@ -58,6 +58,10 @@ class DatabaseService {
   async getSingleCoupon(id){
     return CouponModel.findById(id);
   }
+  // update coupon  by its id
+  async updateCoupon(id,data){
+    return CouponModel.findByIdAndUpdate(id,{$set:data},{new:true});
+  }
 }
 
 module.exports = {
