@@ -42,6 +42,18 @@ class DatabaseService {
   async deleteUser(id) {
     return UserModel.findByIdAndDelete(id);
   }
+  // retrieve all coupons
+  async getAllCoupons(limit,skip) {
+    return CouponModel.find({}, { __v: false }).limit(limit).skip(skip);
+  }
+  // retrieve all coupons by status fill or free 
+  async getCouponByStatus(limit,skip,status) {
+    return CouponModel.find({status}, { __v: false }).limit(limit).skip(skip);
+  }
+  // get count of coupons
+  async getCouponCount(){
+    return CouponModel.countDocuments();
+  }
 }
 
 module.exports = {

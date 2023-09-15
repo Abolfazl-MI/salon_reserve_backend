@@ -120,6 +120,34 @@ class AdminController {
       next(e);
     }
   }
+  async getAllCoupons(req, res, next) {
+    try {
+      let page = req.query.page || 0;
+      let limit = req.query.limit || 10;
+      let total_count = await DataBaseService.getCouponCount();
+      let metadata = generatePaginationInfo(total_count, limit, page);
+      let skip = page * limit;
+      let coupons;
+      // check if type exists in query to query specific type
+      let type = req.query.type;
+      if (type) {
+        coupons = await DataBaseService.getCouponByStatus(
+          limit,
+          skip,
+          type
+        );
+      } else {
+       coupons = await DataBaseService.getAllCoupons(limit, skip);
+      }
+      return res.status(200).json({
+        status: res.statusCode,
+        metadata,
+        data: coupons,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = {

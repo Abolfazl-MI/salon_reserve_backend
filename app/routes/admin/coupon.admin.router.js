@@ -4,6 +4,7 @@ const { authMiddleware, authorizeAdmin } = require("../../http/middlewares/auth.
 const createCouponCodeValidation = require("../../http/validations/coupon/create-coupon.validation");
 const { validateRequest } = require("../../http/middlewares/validatror.mid");
 const { AdminController } = require("../../http/controller/admin.controller");
+const getAllCouponsValidation = require("../../http/validations/coupon/get-all-coupons.validation");
 const router = express.Router();
 
 router.route("/create-coupon").post(
@@ -14,7 +15,13 @@ router.route("/create-coupon").post(
     validateRequest,
     AdminController.createCouponCode
 );
-
+router.route('/').get(
+  authMiddleware,
+  authorizeAdmin,
+  getAllCouponsValidation(),
+  validateRequest,
+  AdminController.getAllCoupons
+)
 module.exports = {
   couponAdminRouter: router,
 };
