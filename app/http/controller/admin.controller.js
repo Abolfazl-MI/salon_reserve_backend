@@ -148,6 +148,18 @@ class AdminController {
       next(error);
     }
   }
+  async getSingleCoupon(req, res, next) {
+    try{
+      let coupon_id=req.params.id;
+      let coupon=await DataBaseService.getSingleCoupon(coupon_id);
+      return res.status(200).json({
+        status:res.statusCode,
+        data:coupon
+      })
+    }catch(e){
+      next(e);
+    }
+  }
 }
 
 module.exports = {

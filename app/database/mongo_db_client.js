@@ -54,6 +54,10 @@ class DatabaseService {
   async getCouponCount(){
     return CouponModel.countDocuments();
   }
+  // get single coupon
+  async getSingleCoupon(id){
+    return CouponModel.findById(id);
+  }
 }
 
 module.exports = {
