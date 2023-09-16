@@ -131,13 +131,9 @@ class AdminController {
       // check if type exists in query to query specific type
       let type = req.query.type;
       if (type) {
-        coupons = await DataBaseService.getCouponByStatus(
-          limit,
-          skip,
-          type
-        );
+        coupons = await DataBaseService.getCouponByStatus(limit, skip, type);
       } else {
-       coupons = await DataBaseService.getAllCoupons(limit, skip);
+        coupons = await DataBaseService.getAllCoupons(limit, skip);
       }
       return res.status(200).json({
         status: res.statusCode,
@@ -149,28 +145,41 @@ class AdminController {
     }
   }
   async getSingleCoupon(req, res, next) {
-    try{
-      let coupon_id=req.params.id;
-      let coupon=await DataBaseService.getSingleCoupon(coupon_id);
+    try {
+      let coupon_id = req.params.id;
+      let coupon = await DataBaseService.getSingleCoupon(coupon_id);
       return res.status(200).json({
-        status:res.statusCode,
-        data:coupon
-      })
-    }catch(e){
+        status: res.statusCode,
+        data: coupon,
+      });
+    } catch (e) {
       next(e);
     }
   }
   async updateCoupon(req, res, next) {
-    try{
-      let data=req.body
-      let coupon_id=req.body.id
-      delete data.id
-      await DataBaseService.updateCoupon(coupon_id,data)
+    try {
+      let data = req.body;
+      let coupon_id = req.body.id;
+      delete data.id;
+      await DataBaseService.updateCoupon(coupon_id, data);
       return res.status(200).json({
-        status:res.statusCode,
-        message:"coupon updated"
+        status: res.statusCode,
+        message: "coupon updated",
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async deleteCoupon(req,res,next) {
+    try {
+      let {id}=req.body
+      let deleted = await DataBaseService.deleteCoupon(id);
+      console.log(deleted)
+      return res.status(200).json({
+        status: res.statusCode,
+        message: "coupon deleted",
       })
-    }catch(e){
+    } catch (e) {
       next(e);
     }
   }

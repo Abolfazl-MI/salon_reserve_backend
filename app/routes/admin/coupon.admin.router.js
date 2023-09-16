@@ -10,6 +10,7 @@ const { AdminController } = require("../../http/controller/admin.controller");
 const getAllCouponsValidation = require("../../http/validations/coupon/get-all-coupons.validation");
 const getSingleCouponValidation = require("../../http/validations/coupon/get-single-coupon.validation");
 const updateCouponValidation = require("../../http/validations/coupon/update-coupon.validation");
+const deleteCouponValidation = require("../../http/validations/coupon/delete-coupon.validation");
 const router = express.Router();
 
 router
@@ -50,6 +51,14 @@ router
     validateRequest,
     AdminController.updateCoupon
   );
+router.route("/delete-coupon").delete(
+  multer().none(),
+  authMiddleware,
+  authorizeAdmin,
+  deleteCouponValidation(),
+  validateRequest,
+  AdminController.deleteCoupon
+);
 module.exports = {
   couponAdminRouter: router,
 };
