@@ -13,6 +13,7 @@ const { imageMiddleWare } = require("../../http/middlewares/image.mid");
 let {getSingleSalonValidation}=require('../../http/validations/salon/get-single-salon.validation');
 const { deleteSalonValidation } = require("../../http/validations/salon/delete-salon.validation");
 const multer = require("multer");
+const { updateSalonInfoValidation } = require("../../http/validations/salon/update-salon.validation");
 const router = express.Router();
 
 router.route("/create-salon").post(
@@ -43,6 +44,15 @@ router.route('/delete-salon').delete(
   deleteSalonValidation(),
   validateRequest,
   AdminController.deleteSalon
+)
+
+router.route('/update-salon-info').post(
+  multer().none(),
+  authMiddleware,
+  authorizeAdmin, 
+  updateSalonInfoValidation(),
+  validateRequest,
+  AdminController.updateSalonInfo
 )
 module.exports = {
   salonAdminRouter: router,

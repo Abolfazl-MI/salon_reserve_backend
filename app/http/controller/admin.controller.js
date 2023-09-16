@@ -218,7 +218,7 @@ class AdminController {
     }
   }
   async getAllSalons(req, res, next) {
-    // page and limit from query 
+    // page and limit from query
     try {
       let page = req.query.page || 0;
       let limit = req.query.limit || 10;
@@ -230,36 +230,52 @@ class AdminController {
         statusCode: res.statusCode,
         metadata,
         data: salons,
-      })
-    }catch(e){
-      next(e)
-    }
-  }
-  async getSingleSalon(req,res,next){
-    try{
-      let id=req.params.id
-      let salon=await DataBaseService.getSingleSalon(id)
-      if(!salon) return next({status:404,message:'salon not found'})
-      console.log(salon)
-      return res.status(200).json({
-        statusCode:res.statusCode,
-        data:salon
-
-      })
-    }catch(e){
-      next(e)
-    }
-  }
-  async deleteSalon(req,res,next){
-    try{
-      let salonId=req.body.id
-      await DataBaseService.deleteSalonById(salonId)
-      return res.status(200).json({
-        statusCode:res.statusCode,
-        message:"salon deleted"
       });
-    }catch(e){
-      next(e)
+    } catch (e) {
+      next(e);
+    }
+  }
+  async getSingleSalon(req, res, next) {
+    try {
+      let id = req.params.id;
+      let salon = await DataBaseService.getSingleSalon(id);
+      if (!salon) return next({ status: 404, message: "salon not found" });
+      console.log(salon);
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        data: salon,
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async deleteSalon(req, res, next) {
+    try {
+      let salonId = req.body.id;
+      await DataBaseService.deleteSalonById(salonId);
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        message: "salon deleted",
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async updateSalonInfo(req, res, next) {
+    try {
+      let data = req.body;
+        console.log(data)
+      let salon_id = data.id;
+      delete data.id;
+      console.log(data)
+      let updatedSalon = await DataBaseService.updateSalonInfo(salon_id, data);
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        message: "salon info updated",
+        updatedSalon,
+      });
+    } catch (e) {
+      next(e);
     }
   }
 }
