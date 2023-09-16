@@ -1,5 +1,6 @@
 let jwt = require("jsonwebtoken");
-
+let path = require("path");
+let fs=require('fs')
 function validatorMapper(errors = []) {
   let message = {};
   errors.forEach((error) => {
@@ -73,10 +74,33 @@ function generatePaginationInfo(total_count, limit, page) {
   console.log(metadata);
   return metadata;
 }
-
+// TODO PRODUCTION PATH SHOULD SET
+function createUploadPath() {
+  // check the appState is dev ?
+  if (process.env.app_state == "dev") {
+    let date = new Date();
+    let year = date.getFullYear()+ "";
+    let month = date.getMonth()+ "";
+    let day = date.getDate()+ "";
+    let uploadPath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "public",
+      "upload",
+      "images"
+    );
+    fs.mkdirSync(uploadPath, { recursive: true });
+    let createdPath=path.join("public","upload",'images')
+    return createdPath;
+  } else {
+    return "production path";
+  }
+}
 module.exports = {
   validatorMapper,
   generateOTP,
   generateCoupon,
   generatePaginationInfo,
+  createUploadPath
 };

@@ -1,4 +1,5 @@
 const { CouponModel } = require("../http/models/coupon.model");
+const { SalonModel } = require("../http/models/salon.model");
 const { UserModel } = require("../http/models/user.model");
 
 class DatabaseService {
@@ -65,6 +66,10 @@ class DatabaseService {
 
   async deleteCoupon(id){
     return CouponModel.findByIdAndDelete(id);
+  }
+
+  async createSalon(data){
+    return SalonModel.create(data)
   }
 }
 

@@ -44,7 +44,7 @@ copun model {
 }
 
 ///-------------> routes<-------------
-/// user 
+/// ------------------>user<------------------
 confrim otp code
 @POST
 public
@@ -148,7 +148,8 @@ private
 	{
 		status:200
 	}
-/// admin 
+/// ------------------>admin<------------------
+	----------------->user<--------------------
 	@post
 	private
 		/api/v1/admin/create-user
@@ -221,6 +222,8 @@ private
 		status:200
 	}
 
+	----------------->salon<--------------------
+
 	create salon
 	@POST
 	private
@@ -289,6 +292,7 @@ private
 	{
 		status:200
 	}
+	----------------->order<--------------------
 
 	create order
 	@POST
@@ -352,6 +356,7 @@ private
 		{
 			status:200
 		}
+	----------------->coupon<--------------------
 	
 	create coupon
 	@POST

@@ -184,6 +184,39 @@ class AdminController {
       next(e);
     }
   }
+  async createSalon(req, res, next) {
+    try {
+      let data = {};
+      let { name, rent_cost } = req.body;
+      let features = req.body.features;
+      data.name = name;
+      data.rent_cost = rent_cost;
+      data.area = req.body.area;
+      if (features) {
+        data.features = features;
+      }
+      if (Object.keys(req.files).length > 0) {
+        let sent_images = req.files.images;
+        let images = [];
+        for (let index = 0; index < sent_images.length; index++) {
+          let imageInfo = sent_images[index];
+          let imagePath = imageInfo.path + "";
+          let path = imagePath.substring(7, imagePath.length);
+          images.push(path);
+        }
+        data.images = images;
+      }
+      let salon = await DataBaseService.createSalon(data);
+
+      return res.status(201).json({
+        statusCode: res.statusCode,
+        message: "salon created",
+        data: salon,
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 module.exports = {
