@@ -71,6 +71,12 @@ class DatabaseService {
   async createSalon(data){
     return SalonModel.create(data)
   }
+  async getSalonsCount(){
+    return SalonModel.countDocuments();
+  }
+  async getAllSalons(limit,skip){
+    return SalonModel.find({}, { __v: false }).limit(limit).skip(skip);
+  }
 }
 
 module.exports = {

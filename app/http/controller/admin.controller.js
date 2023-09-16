@@ -217,6 +217,24 @@ class AdminController {
       next(e);
     }
   }
+  async getAllSalons(req, res, next) {
+    // page and limit from query 
+    try {
+      let page = req.query.page || 0;
+      let limit = req.query.limit || 10;
+      let total_count = await DataBaseService.getSalonsCount();
+      let metadata = generatePaginationInfo(total_count, limit, page);
+      let skip = page * limit;
+      let salons = await DataBaseService.getAllSalons(limit, skip);
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        metadata,
+        data: salons,
+      })
+    }catch(e){
+      next(e)
+    }
+  }
 }
 
 module.exports = {
