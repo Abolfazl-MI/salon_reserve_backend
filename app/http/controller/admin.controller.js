@@ -250,6 +250,18 @@ class AdminController {
       next(e)
     }
   }
+  async deleteSalon(req,res,next){
+    try{
+      let salonId=req.body.id
+      await DataBaseService.deleteSalonById(salonId)
+      return res.status(200).json({
+        statusCode:res.statusCode,
+        message:"salon deleted"
+      });
+    }catch(e){
+      next(e)
+    }
+  }
 }
 
 module.exports = {

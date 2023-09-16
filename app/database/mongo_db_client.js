@@ -80,6 +80,9 @@ class DatabaseService {
   async getSingleSalon(id) {
     return SalonModel.findById(id);
   }
+  async deleteSalonById(id){
+    return SalonModel.findByIdAndDelete(id)
+  }
 }
 
 module.exports = {
