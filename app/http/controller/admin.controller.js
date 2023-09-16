@@ -148,6 +148,7 @@ class AdminController {
     try {
       let coupon_id = req.params.id;
       let coupon = await DataBaseService.getSingleCoupon(coupon_id);
+      if (!coupon) return next({ status: 404, message: "coupon not found" });
       return res.status(200).json({
         status: res.statusCode,
         data: coupon,
@@ -170,15 +171,15 @@ class AdminController {
       next(e);
     }
   }
-  async deleteCoupon(req,res,next) {
+  async deleteCoupon(req, res, next) {
     try {
-      let {id}=req.body
+      let { id } = req.body;
       let deleted = await DataBaseService.deleteCoupon(id);
-      console.log(deleted)
+      console.log(deleted);
       return res.status(200).json({
         status: res.statusCode,
         message: "coupon deleted",
-      })
+      });
     } catch (e) {
       next(e);
     }
