@@ -44,38 +44,41 @@ class DatabaseService {
     return UserModel.findByIdAndDelete(id);
   }
   // retrieve all coupons
-  async getAllCoupons(limit,skip) {
+  async getAllCoupons(limit, skip) {
     return CouponModel.find({}, { __v: false }).limit(limit).skip(skip);
   }
-  // retrieve all coupons by status fill or free 
-  async getCouponByStatus(limit,skip,status) {
-    return CouponModel.find({status}, { __v: false }).limit(limit).skip(skip);
+  // retrieve all coupons by status fill or free
+  async getCouponByStatus(limit, skip, status) {
+    return CouponModel.find({ status }, { __v: false }).limit(limit).skip(skip);
   }
   // get count of coupons
-  async getCouponCount(){
+  async getCouponCount() {
     return CouponModel.countDocuments();
   }
   // get single coupon
-  async getSingleCoupon(id){
+  async getSingleCoupon(id) {
     return CouponModel.findById(id);
   }
   // update coupon  by its id
-  async updateCoupon(id,data){
-    return CouponModel.findByIdAndUpdate(id,{$set:data},{new:true});
+  async updateCoupon(id, data) {
+    return CouponModel.findByIdAndUpdate(id, { $set: data }, { new: true });
   }
 
-  async deleteCoupon(id){
+  async deleteCoupon(id) {
     return CouponModel.findByIdAndDelete(id);
   }
 
-  async createSalon(data){
-    return SalonModel.create(data)
+  async createSalon(data) {
+    return SalonModel.create(data);
   }
-  async getSalonsCount(){
+  async getSalonsCount() {
     return SalonModel.countDocuments();
   }
-  async getAllSalons(limit,skip){
+  async getAllSalons(limit, skip) {
     return SalonModel.find({}, { __v: false }).limit(limit).skip(skip);
+  }
+  async getSingleSalon(id) {
+    return SalonModel.findById(id);
   }
 }
 

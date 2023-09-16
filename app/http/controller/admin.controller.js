@@ -235,6 +235,21 @@ class AdminController {
       next(e)
     }
   }
+  async getSingleSalon(req,res,next){
+    try{
+      let id=req.params.id
+      let salon=await DataBaseService.getSingleSalon(id)
+      if(!salon) return next({status:404,message:'salon not found'})
+      console.log(salon)
+      return res.status(200).json({
+        statusCode:res.statusCode,
+        data:salon
+
+      })
+    }catch(e){
+      next(e)
+    }
+  }
 }
 
 module.exports = {

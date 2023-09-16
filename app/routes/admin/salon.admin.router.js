@@ -10,6 +10,7 @@ const {
 const { validateRequest } = require("../../http/middlewares/validatror.mid");
 const { AdminController } = require("../../http/controller/admin.controller");
 const { imageMiddleWare } = require("../../http/middlewares/image.mid");
+let {getSingleSalonValidation}=require('../../http/validations/salon/get-single-salon.validation')
 const router = express.Router();
 
 router.route("/create-salon").post(
@@ -26,6 +27,13 @@ router
   .route("/")
   .get(authMiddleware, authorizeAdmin, AdminController.getAllSalons);
 
+router.route('/single/:id').get(
+  authMiddleware,
+  authorizeAdmin,
+  getSingleSalonValidation(),
+  validateRequest,
+  AdminController.getSingleSalon
+)
 module.exports = {
   salonAdminRouter: router,
 };
