@@ -92,6 +92,16 @@ class DatabaseService {
       { new: true }
     );
   }
+  async updateSalonImages(id, data) {
+    let salon=await SalonModel.findById(id);
+    
+    for(let image of data){
+      if(!salon.images.includes(image)){
+        salon.images.push(image);
+      }
+    }
+    return salon.save()
+  }
 }
 
 module.exports = {

@@ -13,7 +13,8 @@ const { imageMiddleWare } = require("../../http/middlewares/image.mid");
 let {getSingleSalonValidation}=require('../../http/validations/salon/get-single-salon.validation');
 const { deleteSalonValidation } = require("../../http/validations/salon/delete-salon.validation");
 const multer = require("multer");
-const { updateSalonInfoValidation } = require("../../http/validations/salon/update-salon.validation");
+const { updateSalonInfoValidation } = require("../../http/validations/salon/update-salon-info.validation");
+const { updateSalonImagesValidation } = require("../../http/validations/salon/update-salon-images.validation");
 const router = express.Router();
 
 router.route("/create-salon").post(
@@ -53,6 +54,18 @@ router.route('/update-salon-info').post(
   updateSalonInfoValidation(),
   validateRequest,
   AdminController.updateSalonInfo
+)
+router.route('/update-salon-image').post(
+  upload.fields([
+    {
+      name:'images'
+    }
+  ]),
+  authMiddleware,
+  authorizeAdmin,
+  updateSalonImagesValidation(),
+  validateRequest,
+  AdminController.updateSalonImages 
 )
 module.exports = {
   salonAdminRouter: router,

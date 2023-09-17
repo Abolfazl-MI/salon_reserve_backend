@@ -264,16 +264,43 @@ class AdminController {
   async updateSalonInfo(req, res, next) {
     try {
       let data = req.body;
-        console.log(data)
+      console.log(data);
       let salon_id = data.id;
       delete data.id;
-      console.log(data)
+      console.log(data);
       let updatedSalon = await DataBaseService.updateSalonInfo(salon_id, data);
       return res.status(200).json({
         statusCode: res.statusCode,
         message: "salon info updated",
         updatedSalon,
       });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async updateSalonImages() {
+    try {
+    } catch (e) {}
+  }
+  async updateSalonImages(req, res, next) {
+    try {
+      let salon_id=req.body.id
+      let images = [];
+      if (Object.keys(req.files).length > 0) {
+        let sent_images = req.files.images;
+        for (let index = 0; index < sent_images.length; index++) {
+          let imageInfo = sent_images[index];
+          let imagePath = imageInfo.path + "";
+          let path = imagePath.substring(7, imagePath.length);
+          images.push(path);
+        }
+      }
+      console.log(images);
+      let updatedSalon=await DataBaseService.updateSalonImages(salon_id,images)
+      return res.status(200).json({
+        statusCode:res.statusCode,
+        message:"salon images updated",
+      })
     } catch (e) {
       next(e);
     }
