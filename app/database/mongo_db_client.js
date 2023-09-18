@@ -102,6 +102,14 @@ class DatabaseService {
     }
     return salon.save()
   }
+  async deleteSalonImages(id,data){
+    let salon=await SalonModel.findById(id);
+    for (let item of data){
+      let index=salon.images.indexOf(item)
+      salon.images.splice(index,1)
+    }
+    return salon.save();
+  }
 }
 
 module.exports = {

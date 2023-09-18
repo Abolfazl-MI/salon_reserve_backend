@@ -305,6 +305,22 @@ class AdminController {
       next(e);
     }
   }
+  async deleteSalonImage(req,res,next){
+    try{
+        let data=req.body
+        let salon_id=data.id
+        delete data.id
+        console.log(data.images)
+        let deleteSalonImage=await DataBaseService.deleteSalonImages(salon_id,data.images)
+        // TODO SHOULD DELETE THE PHOTO FROM THE PRODUCTION STORAGE SERVER
+        return res.status(200).json({
+          statusCode:res.statusCode,
+          message:"salon images deleted",
+        })
+    }catch(e){
+      next(e)
+    }
+  }
 }
 
 module.exports = {
