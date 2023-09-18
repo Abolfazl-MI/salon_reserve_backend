@@ -18,9 +18,24 @@ let orderSchema = new mongoose.Schema({
     status:{
         type:String,
         enum:['pending','canceled','completed'],
+        default:'pending'
     },
     remained_time:{
         type:Number,
+    },
+    payment_method:{
+        type:String,
+        enum:['one-time','installment'],
+        default:'one-time'
+    },
+    remained_amount:{
+        type:Number,
+        default:0,
+        // when the payment is installment would have the remained amount which customer should pay else is 0
+    },
+    order_date:{
+        type:Date,
+        default:Date.now,
     }
 })
 

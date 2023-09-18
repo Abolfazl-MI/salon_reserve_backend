@@ -321,6 +321,9 @@ class AdminController {
       next(e)
     }
   }
+  async createOrder(req, res, next) {
+    
+  }
 }
 
 module.exports = {
