@@ -352,7 +352,7 @@ class AdminController {
           return next({ status: 404, message: "coupon has used before" });
         }
       }
-      let salon_reserved_days_length=JSON.parse(reserve_days).length
+      let salon_reserved_days_length = JSON.parse(reserve_days).length;
       // calculate total cost
       let total_count = salon_rent_cost * salon_reserved_days_length;
       // create order model
@@ -383,6 +383,33 @@ class AdminController {
       });
     } catch (error) {
       next(error);
+    }
+  }
+  async getAllOrders(req, res, next) {
+    try {
+      let page = req.query.page || 0;
+      let limit = req.query.limit || 10;
+      let skip = page * limit;
+      let orders;
+      let metadata;
+      let total_count
+      let status = req.query.status;
+      if (status) {
+        total_count = await DataBaseService.getOrderCountByStatus(status);
+        metadata = generatePaginationInfo(total_count, limit, page);
+        orders = await DataBaseService.getOrdersByStatus(status, skip, limit);
+      } else {
+        total_count = await DataBaseService.getOrderCount();
+        metadata = generatePaginationInfo(total_count, limit, page);
+        orders = await DataBaseService.getAllOrders(skip, limit);
+      }
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        metadata,
+        data: orders,
+      });
+    } catch (e) {
+      next(e);
     }
   }
 }

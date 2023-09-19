@@ -4,11 +4,12 @@ const {
   authorizeAdmin,
 } = require("../../http/middlewares/auth.mid");
 const {
-  createOrderValidation,
+  adminCreateOrderValidation,
 } = require("../../http/validations/order/create-order.validation");
 const { validateRequest } = require("../../http/middlewares/validatror.mid");
 const { AdminController } = require("../../http/controller/admin.controller");
-let multer=require('multer')
+let multer=require('multer');
+const { adminGetAllOrderValidation } = require("../../http/validations/order/get-all-order.validation");
 const router = express.Router();
 
 router
@@ -17,7 +18,7 @@ router
     multer().none(),
     authMiddleware,
     authorizeAdmin,
-    createOrderValidation(),
+    adminCreateOrderValidation(),
     validateRequest,
     AdminController.createOrder
   );
@@ -25,7 +26,9 @@ router
 router.route('/').get(
   authMiddleware,
   authorizeAdmin,
-  // AdminController.getAllOrders
+  adminGetAllOrderValidation(),
+  validateRequest,
+  AdminController.getAllOrders
 )
 
 router.route('/single/:id').get(

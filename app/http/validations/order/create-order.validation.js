@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-function createOrderValidation(req, res, next) {
+function adminCreateOrderValidation(req, res, next) {
   return [
     body("user_id")
       .notEmpty()
@@ -23,5 +23,5 @@ function createOrderValidation(req, res, next) {
 }
 
 module.exports = {
-  createOrderValidation,
+  adminCreateOrderValidation,
 };

@@ -2,7 +2,7 @@ const { CouponModel } = require("../http/models/coupon.model");
 const { ReservedTimeModel } = require("../http/models/reserve.model");
 const { SalonModel } = require("../http/models/salon.model");
 const { UserModel } = require("../http/models/user.model");
-const {OrderModel}=require("../http/models/order.model")
+const { OrderModel } = require("../http/models/order.model");
 class DatabaseService {
   async createUserWithPhone(phone_number, otp_code) {
     return UserModel.create({
@@ -115,21 +115,33 @@ class DatabaseService {
     return OrderModel.create(data);
   }
   async createReservedTime(data) {
-    let result= await ReservedTimeModel.create(data);
-    return result
+    let result = await ReservedTimeModel.create(data);
+    return result;
   }
   async createManyReservedTime(data) {
     return ReservedTimeModel.insertMany(data);
   }
-  async getCouponByCode(code){
-    return CouponModel.findOne({code})
+  async getCouponByCode(code) {
+    return CouponModel.findOne({ code });
   }
-  async updateCouponStatus(id,status){
-    return CouponModel.findByIdAndUpdate(id,{
-      $set:{
-        status
-      }
-    })
+  async updateCouponStatus(id, status) {
+    return CouponModel.findByIdAndUpdate(id, {
+      $set: {
+        status,
+      },
+    });
+  }
+  async getOrderCount() {
+    return OrderModel.countDocuments();
+  }
+  async getOrdersByStatus(status, skip, limit) {
+    return OrderModel.find({ status }, { __v: false }).skip(skip).limit(limit);
+  }
+  async getAllOrders(skip, limit) {
+    return OrderModel.find({}, { __v: false }).skip(skip).limit(limit);
+  }
+  async getOrderCountByStatus(status) {
+    return OrderModel.countDocuments({ status });
   }
 }
 
