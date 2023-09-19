@@ -10,6 +10,7 @@ const { validateRequest } = require("../../http/middlewares/validatror.mid");
 const { AdminController } = require("../../http/controller/admin.controller");
 let multer=require('multer');
 const { adminGetAllOrderValidation } = require("../../http/validations/order/get-all-order.validation");
+const {adminGetSingleOrderValidation} = require("../../http/validations/order/get-single-order.validation");
 const router = express.Router();
 
 router
@@ -34,7 +35,9 @@ router.route('/').get(
 router.route('/single/:id').get(
   authMiddleware,
   authorizeAdmin,
-  // AdminController.getSingleOrder
+  adminGetSingleOrderValidation(),
+  validateRequest,
+  AdminController.getSingleOrder
 )
 
 router.route('/update-order').post(

@@ -392,7 +392,7 @@ class AdminController {
       let skip = page * limit;
       let orders;
       let metadata;
-      let total_count
+      let total_count;
       let status = req.query.status;
       if (status) {
         total_count = await DataBaseService.getOrderCountByStatus(status);
@@ -407,6 +407,19 @@ class AdminController {
         statusCode: res.statusCode,
         metadata,
         data: orders,
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async getSingleOrder(req, res, next) {
+    try {
+      let id = req.params.id;
+      let order = await DataBaseService.getSingleOrder(id);
+      if (!order) return next({ status: 404, message: "order not found" });
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        data: order,
       });
     } catch (e) {
       next(e);

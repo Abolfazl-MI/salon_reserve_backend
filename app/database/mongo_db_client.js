@@ -143,6 +143,9 @@ class DatabaseService {
   async getOrderCountByStatus(status) {
     return OrderModel.countDocuments({ status });
   }
+  async getSingleOrder(id){
+    return OrderModel.findById(id);
+  }
 }
 
 module.exports = {
