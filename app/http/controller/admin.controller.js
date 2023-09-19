@@ -425,6 +425,18 @@ class AdminController {
       next(e);
     }
   }
+  async deleteOrder(req, res, next) {
+    try {
+      let id = req.body.id;
+      await DataBaseService.deleteOrderById(id);
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        message: "order deleted",
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 module.exports = {

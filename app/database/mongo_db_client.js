@@ -146,6 +146,9 @@ class DatabaseService {
   async getSingleOrder(id){
     return OrderModel.findById(id);
   }
+  async deleteOrderById(id){
+    return OrderModel.findByIdAndDelete(id);
+  }
 }
 
 module.exports = {

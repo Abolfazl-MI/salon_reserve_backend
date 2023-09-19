@@ -11,6 +11,7 @@ const { AdminController } = require("../../http/controller/admin.controller");
 let multer=require('multer');
 const { adminGetAllOrderValidation } = require("../../http/validations/order/get-all-order.validation");
 const {adminGetSingleOrderValidation} = require("../../http/validations/order/get-single-order.validation");
+const { adminDeleteOrderValidation } = require("../../http/validations/order/delete-order.validation");
 const router = express.Router();
 
 router
@@ -47,9 +48,12 @@ router.route('/update-order').post(
 )
 
 router.route('/delete-order').delete(
+  multer().none(),
   authMiddleware,
   authorizeAdmin,
-  // AdminController.deleteOrder
+  adminDeleteOrderValidation(),
+  validateRequest,
+  AdminController.deleteOrder
 )
 
 module.exports = {
