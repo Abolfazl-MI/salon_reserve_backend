@@ -8,11 +8,13 @@ const {
 } = require("../../http/validations/order/create-order.validation");
 const { validateRequest } = require("../../http/middlewares/validatror.mid");
 const { AdminController } = require("../../http/controller/admin.controller");
+let multer=require('multer')
 const router = express.Router();
 
 router
   .route("/create-order")
   .post(
+    multer().none(),
     authMiddleware,
     authorizeAdmin,
     createOrderValidation(),

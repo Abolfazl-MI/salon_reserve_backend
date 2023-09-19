@@ -14,12 +14,14 @@ function createOrderValidation(req, res, next) {
       .withMessage("user id is invalid"),
     body("reserve_days")
       .notEmpty()
-      .withMessage("reserve_days must not be empty")
-      .isArray({ min: 1, max: 100 })
-      .withMessage("reserve_days must be an array"),
+      .withMessage("reserve_days must not be empty"),
+    body("coupon_code")
+      .optional()
+      .notEmpty()
+      .withMessage("coupon code should not be empty"),
   ];
 }
 
-module.exports={
-    createOrderValidation
-}
+module.exports = {
+  createOrderValidation,
+};

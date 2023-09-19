@@ -284,7 +284,7 @@ class AdminController {
   }
   async updateSalonImages(req, res, next) {
     try {
-      let salon_id=req.body.id
+      let salon_id = req.body.id;
       let images = [];
       if (Object.keys(req.files).length > 0) {
         let sent_images = req.files.images;
@@ -296,33 +296,94 @@ class AdminController {
         }
       }
       console.log(images);
-      let updatedSalon=await DataBaseService.updateSalonImages(salon_id,images)
+      let updatedSalon = await DataBaseService.updateSalonImages(
+        salon_id,
+        images
+      );
       return res.status(200).json({
-        statusCode:res.statusCode,
-        message:"salon images updated",
-      })
+        statusCode: res.statusCode,
+        message: "salon images updated",
+      });
     } catch (e) {
       next(e);
     }
   }
-  async deleteSalonImage(req,res,next){
-    try{
-        let data=req.body
-        let salon_id=data.id
-        delete data.id
-        console.log(data.images)
-        let deleteSalonImage=await DataBaseService.deleteSalonImages(salon_id,data.images)
-        // TODO SHOULD DELETE THE PHOTO FROM THE PRODUCTION STORAGE SERVER
-        return res.status(200).json({
-          statusCode:res.statusCode,
-          message:"salon images deleted",
-        })
-    }catch(e){
-      next(e)
+  async deleteSalonImage(req, res, next) {
+    try {
+      let data = req.body;
+      let salon_id = data.id;
+      delete data.id;
+      console.log(data.images);
+      let deleteSalonImage = await DataBaseService.deleteSalonImages(
+        salon_id,
+        data.images
+      );
+      // TODO SHOULD DELETE THE PHOTO FROM THE PRODUCTION STORAGE SERVER
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        message: "salon images deleted",
+      });
+    } catch (e) {
+      next(e);
     }
   }
   async createOrder(req, res, next) {
-    
+    try {
+      // deconstruct data from body
+      let { salon_id, user_id, reserve_days, coupon_code } = req.body;
+      // check if user exists
+      let user = await DataBaseService.getUserById(user_id);
+      if (!user) return next({ status: 404, message: "user not found" });
+      // get salon data
+      let salon = await DataBaseService.getSingleSalon(salon_id);
+      // check if salon not found
+      if (!salon) return next({ status: 404, message: "salon not found" });
+      // variable to store salon rent
+      let salon_rent_cost = salon.rent_cost;
+      // check if coupon code provided
+      if (coupon_code) {
+        // get coupon data from db
+        let coupon = await DataBaseService.getCouponByCode(coupon_code);
+        // check if coupon not used before
+        if (coupon.status == "free") {
+          salon_rent_cost = salon_rent_cost - coupon.discount;
+          await DataBaseService.updateCouponStatus(coupon._id, "fill");
+        } else {
+          return next({ status: 404, message: "coupon has used before" });
+        }
+      }
+      let salon_reserved_days_length=JSON.parse(reserve_days).length
+      // calculate total cost
+      let total_count = salon_rent_cost * salon_reserved_days_length;
+      // create order model
+      let orderData = {
+        user: user_id,
+        salon: salon_id,
+        total_count,
+      };
+      let order = await DataBaseService.createOrder(orderData);
+      // for creating model which contains salon id and user id , iterate over and create data model
+      let salon_reserved_days_data = [];
+      for (let data of JSON.parse(reserve_days)) {
+        data.reserver_id = user_id;
+        data.salon_id = salon_id;
+        data.order_id = order._id;
+        salon_reserved_days_data.push(data);
+      }
+      console.log(salon_reserved_days_data);
+      // create reserved days model
+      let salon_reserved_days = await DataBaseService.createManyReservedTime(
+        salon_reserved_days_data
+      );
+
+      return res.status(201).json({
+        statusCode: res.statusCode,
+        message: "order created",
+        data: order,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

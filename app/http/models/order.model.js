@@ -1,4 +1,4 @@
-
+let mongoose=require('mongoose')
 
 let orderSchema = new mongoose.Schema({
     user:{
@@ -20,9 +20,7 @@ let orderSchema = new mongoose.Schema({
         enum:['pending','canceled','completed'],
         default:'pending'
     },
-    remained_time:{
-        type:Number,
-    },
+
     payment_method:{
         type:String,
         enum:['one-time','installment'],
