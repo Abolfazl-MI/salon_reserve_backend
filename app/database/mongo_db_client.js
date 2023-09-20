@@ -143,11 +143,18 @@ class DatabaseService {
   async getOrderCountByStatus(status) {
     return OrderModel.countDocuments({ status });
   }
-  async getSingleOrder(id){
+  async getSingleOrder(id) {
     return OrderModel.findById(id);
   }
-  async deleteOrderById(id){
+  async deleteOrderById(id) {
     return OrderModel.findByIdAndDelete(id);
+  }
+  async updateOrderStatus(id, status) {
+    return OrderModel.findByIdAndUpdate(
+      id,
+      { $set: { status } },
+      { new: true }
+    );
   }
 }
 

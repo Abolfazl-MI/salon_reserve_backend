@@ -380,9 +380,9 @@ class AdminController {
         orderData.payment_method = "installment";
         orderData.payment_amount = payment_amount;
         let remained_amount = total_count - payment_amount;
-        orderData.remained_amount=remained_amount
+        orderData.remained_amount = remained_amount;
       }
-      console.log(orderData)
+      console.log(orderData);
       let order = await DataBaseService.createOrder(orderData);
       // for creating model which contains salon id and user id , iterate over and create data model
       let salon_reserved_days_data = [];
@@ -455,6 +455,18 @@ class AdminController {
         statusCode: res.statusCode,
         message: "order deleted",
       });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async updateOrderStatus(req, res, next) {
+    try {
+      let {status,id}=req.body
+      await DataBaseService.updateOrderStatus(id,status);
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        message: "order status updated",
+      })
     } catch (e) {
       next(e);
     }
