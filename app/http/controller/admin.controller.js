@@ -471,6 +471,39 @@ class AdminController {
       next(e);
     }
   }
+  async updateOrderReserveDays(req,res,next){
+    try{
+      let {id,reserve_days,salon_id}=req.body
+      let order=await DataBaseService.getSingleOrder(id)
+      let salon=await DataBaseService.getSingleSalon(salon_id)
+      if(!salon){
+        return next({status:404,message:"salon not found"})
+      }
+      if(!order){
+        return next({status:404,message:"order not found"})
+      }
+      let salon_reserved_days_length=JSON.parse(reserve_days).length
+      let updated_total_count=salon.rent_cost*salon_reserved_days_length
+      order.total_count=updated_total_count
+      await order.save()
+      let salon_reserved_days_data = [];
+      for (let data of JSON.parse(reserve_days)) {
+        data.reserver_id = order.user;
+        data.salon_id = salon._id;
+        data.order_id = order._id;
+        salon_reserved_days_data.push(data);
+      }
+      let salon_reserved_days = await DataBaseService.createManyReservedTime(
+        salon_reserved_days_data
+      );
+      return res.status(200).json({
+        statusCode:res.statusCode,
+        message:"order reserved days updated"
+      })
+    }catch(e){
+      next(e)
+    }
+  }
 }
 
 module.exports = {

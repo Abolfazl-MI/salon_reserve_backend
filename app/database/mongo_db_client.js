@@ -156,6 +156,13 @@ class DatabaseService {
       { new: true }
     );
   }
+  async updateOrderPaymentMethod(id, payment_method) {
+    return OrderModel.findByIdAndUpdate(
+      id,
+      { $set: { payment_method } },
+      { new: true }
+    );
+  }
 }
 
 module.exports = {

@@ -13,6 +13,7 @@ const { adminGetAllOrderValidation } = require("../../http/validations/order/get
 const {adminGetSingleOrderValidation} = require("../../http/validations/order/get-single-order.validation");
 const { adminDeleteOrderValidation } = require("../../http/validations/order/delete-order.validation");
 const { adminUpdateOrderStatusValidation } = require("../../http/validations/order/update-order-status.validation");
+const { adminUpdateReservedDaysValidation } = require("../../http/validations/order/update-reseved-days");
 
 const router = express.Router();
 
@@ -43,7 +44,7 @@ router.route('/single/:id').get(
   AdminController.getSingleOrder
 )
 
-router.route('/update-order-status').post(
+router.route('/update-status').post(
   multer().none(),
   authMiddleware,
   authorizeAdmin,
@@ -51,7 +52,14 @@ router.route('/update-order-status').post(
   validateRequest,
   AdminController.updateOrderStatus
 )
-
+router.route('/update-reserved-days').post(
+  multer().none(),
+  authMiddleware,
+  authorizeAdmin,
+  adminUpdateReservedDaysValidation(),
+  validateRequest,
+  AdminController.updateOrderReserveDays
+)
 router.route('/delete-order').delete(
   multer().none(),
   authMiddleware,
