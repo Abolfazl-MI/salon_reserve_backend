@@ -31,6 +31,11 @@ let orderSchema = new mongoose.Schema({
         default:0,
         // when the payment is installment would have the remained amount which customer should pay else is 0
     },
+    payment_amount:{
+        // this field is use to determind how amount of user purcheds
+        type:Number,
+        default:0,
+    },
     order_date:{
         type:Date,
         default:Date.now,

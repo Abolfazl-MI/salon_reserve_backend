@@ -330,7 +330,14 @@ class AdminController {
   async createOrder(req, res, next) {
     try {
       // deconstruct data from body
-      let { salon_id, user_id, reserve_days, coupon_code } = req.body;
+      let {
+        salon_id,
+        user_id,
+        reserve_days,
+        coupon_code,
+        payment_method,
+        payment_amount,
+      } = req.body;
       // check if user exists
       let user = await DataBaseService.getUserById(user_id);
       if (!user) return next({ status: 404, message: "user not found" });
@@ -355,12 +362,27 @@ class AdminController {
       let salon_reserved_days_length = JSON.parse(reserve_days).length;
       // calculate total cost
       let total_count = salon_rent_cost * salon_reserved_days_length;
+
       // create order model
       let orderData = {
         user: user_id,
         salon: salon_id,
         total_count,
       };
+      if (payment_method && payment_method == "installment") {
+        if (payment_amount >= total_count) {
+          next({
+            status: 400,
+            message:
+              "payment amount must not equal to total count or bigger when installment is payment method",
+          });
+        }
+        orderData.payment_method = "installment";
+        orderData.payment_amount = payment_amount;
+        let remained_amount = total_count - payment_amount;
+        orderData.remained_amount=remained_amount
+      }
+      console.log(orderData)
       let order = await DataBaseService.createOrder(orderData);
       // for creating model which contains salon id and user id , iterate over and create data model
       let salon_reserved_days_data = [];
