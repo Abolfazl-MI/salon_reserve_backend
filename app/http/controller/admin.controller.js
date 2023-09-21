@@ -338,6 +338,7 @@ class AdminController {
         payment_method,
         payment_amount,
       } = req.body;
+      let applied_coupon_discount;
       // check if user exists
       let user = await DataBaseService.getUserById(user_id);
       if (!user) return next({ status: 404, message: "user not found" });
@@ -351,6 +352,8 @@ class AdminController {
       if (coupon_code) {
         // get coupon data from db
         let coupon = await DataBaseService.getCouponByCode(coupon_code);
+        // set value to applied_coupon variable
+        applied_coupon_discount = coupon.discount;
         // check if coupon not used before
         if (coupon.status == "free") {
           salon_rent_cost = salon_rent_cost - coupon.discount;
@@ -369,6 +372,10 @@ class AdminController {
         salon: salon_id,
         total_count,
       };
+      if (applied_coupon_discount) {
+        orderData.applied_coupon_discount = applied_coupon_discount;
+      }
+
       if (payment_method && payment_method == "installment") {
         if (payment_amount >= total_count) {
           next({
@@ -461,31 +468,31 @@ class AdminController {
   }
   async updateOrderStatus(req, res, next) {
     try {
-      let {status,id}=req.body
-      await DataBaseService.updateOrderStatus(id,status);
+      let { status, id } = req.body;
+      await DataBaseService.updateOrderStatus(id, status);
       return res.status(200).json({
         statusCode: res.statusCode,
         message: "order status updated",
-      })
+      });
     } catch (e) {
       next(e);
     }
   }
-  async updateOrderReserveDays(req,res,next){
-    try{
-      let {id,reserve_days,salon_id}=req.body
-      let order=await DataBaseService.getSingleOrder(id)
-      let salon=await DataBaseService.getSingleSalon(salon_id)
-      if(!salon){
-        return next({status:404,message:"salon not found"})
+  async updateOrderReserveDays(req, res, next) {
+    try {
+      let { id, reserve_days, salon_id } = req.body;
+      let order = await DataBaseService.getSingleOrder(id);
+      let salon = await DataBaseService.getSingleSalon(salon_id);
+      if (!salon) {
+        return next({ status: 404, message: "salon not found" });
       }
-      if(!order){
-        return next({status:404,message:"order not found"})
+      if (!order) {
+        return next({ status: 404, message: "order not found" });
       }
-      let salon_reserved_days_length=JSON.parse(reserve_days).length
-      let updated_total_count=salon.rent_cost*salon_reserved_days_length
-      order.total_count=updated_total_count
-      await order.save()
+      let salon_reserved_days_length = JSON.parse(reserve_days).length;
+      let updated_total_count = salon.rent_cost * salon_reserved_days_length;
+      order.total_count = updated_total_count;
+      await order.save();
       let salon_reserved_days_data = [];
       for (let data of JSON.parse(reserve_days)) {
         data.reserver_id = order.user;
@@ -497,11 +504,41 @@ class AdminController {
         salon_reserved_days_data
       );
       return res.status(200).json({
-        statusCode:res.statusCode,
-        message:"order reserved days updated"
+        statusCode: res.statusCode,
+        message: "order reserved days updated",
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async deleteOrderReservedTimes(req, res, next) {
+    try {
+      let { id, reserve_days } = req.body;
+      let order = await DataBaseService.getSingleOrder(id);
+      if (!order) {
+        return next({ status: 404, message: "order not found" });
+      }
+      let result=await DataBaseService.deleteManyOrderReservedTimesByOrderId(JSON.parse(reserve_days));
+      // rent of salon, if coupon applied we should subtract it
+      let salon_real_rent
+      if(order.applied_coupon_discount){
+        salon_real_rent=order.total_count-order.applied_coupon_discount;
+      }else{
+        salon_real_rent=order.total_count;
+      }
+      // the length of days sent to remove
+      let removing_days_length=JSON.parse(reserve_days).length;
+      // the count which is going to subtract
+      let subtracted_count=salon_real_rent*removing_days_length;
+      // subtracting the count
+      order.total_count=order.total_count-subtracted_count;
+      await order.save();
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        message: "order reserved days deleted",
       })
-    }catch(e){
-      next(e)
+    } catch (e) {
+      next(e);
     }
   }
 }

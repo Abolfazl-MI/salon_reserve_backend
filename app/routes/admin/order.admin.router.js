@@ -14,6 +14,7 @@ const {adminGetSingleOrderValidation} = require("../../http/validations/order/ge
 const { adminDeleteOrderValidation } = require("../../http/validations/order/delete-order.validation");
 const { adminUpdateOrderStatusValidation } = require("../../http/validations/order/update-order-status.validation");
 const { adminUpdateReservedDaysValidation } = require("../../http/validations/order/update-reseved-days");
+const { adminDeleteOrderReserveDay } = require("../../http/validations/order/delete-reseve-days.validation");
 
 const router = express.Router();
 
@@ -59,6 +60,18 @@ router.route('/update-reserved-days').post(
   adminUpdateReservedDaysValidation(),
   validateRequest,
   AdminController.updateOrderReserveDays
+)
+router.route('/delete-reserved-days').delete(
+  multer().none(),
+  authMiddleware,
+  authorizeAdmin,
+  adminDeleteOrderReserveDay(),
+  validateRequest,
+  AdminController.deleteOrderReservedTimes
+  // (req,res,next)=>{
+  //   // console.log(req.body)
+  //   console.log(JSON.parse(req.body.reserve_days))
+  // }
 )
 router.route('/delete-order').delete(
   multer().none(),
