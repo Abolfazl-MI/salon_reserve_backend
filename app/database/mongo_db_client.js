@@ -53,8 +53,12 @@ class DatabaseService {
     return CouponModel.find({ status }, { __v: false }).limit(limit).skip(skip);
   }
   // get count of coupons
-  async getCouponCount() {
-    return CouponModel.countDocuments();
+  async getCouponCount(status) {
+    if (status) {
+      return CouponModel.countDocuments({ status });
+    } else {
+      return CouponModel.countDocuments();
+    }
   }
   // get single coupon
   async getSingleCoupon(id) {
@@ -147,13 +151,15 @@ class DatabaseService {
     return OrderModel.findById(id);
   }
   async getSingleOrderWithPopulate(id) {
-    return OrderModel.findById(id).populate({
-      path: "user",
-      model: "user",
-    }).populate({
-      path:'salon',
-      model:'salon'
-    });
+    return OrderModel.findById(id)
+      .populate({
+        path: "user",
+        model: "user",
+      })
+      .populate({
+        path: "salon",
+        model: "salon",
+      });
   }
   async deleteOrderById(id) {
     return OrderModel.findByIdAndDelete(id);
@@ -178,16 +184,19 @@ class DatabaseService {
       _id: { $in: days_id },
     });
   }
-  async getReservedDaysByOrderId(orderId,showIds=false) {
-    if(showIds){
+  async getReservedDaysByOrderId(orderId, showIds = false) {
+    if (showIds) {
       return ReservedTimeModel.find({ order_id: orderId });
-    }else{
-      return ReservedTimeModel.find({ order_id: orderId },{
-        __v:false,
-        reserver_id:false,
-        salon_id:false,
-        order_id:false
-      });
+    } else {
+      return ReservedTimeModel.find(
+        { order_id: orderId },
+        {
+          __v: false,
+          reserver_id: false,
+          salon_id: false,
+          order_id: false,
+        }
+      );
     }
   }
 }

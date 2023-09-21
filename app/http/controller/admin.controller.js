@@ -131,7 +131,10 @@ class AdminController {
       // check if type exists in query to query specific type
       let type = req.query.type;
       if (type) {
+        let queried_count=await DataBaseService.getCouponCount(type);
+        
         coupons = await DataBaseService.getCouponByStatus(limit, skip, type);
+        metadata.queried_count=queried_count
       } else {
         coupons = await DataBaseService.getAllCoupons(limit, skip);
       }
@@ -424,8 +427,11 @@ class AdminController {
       let total_count;
       let status = req.query.status;
       if (status) {
-        total_count = await DataBaseService.getOrderCountByStatus(status);
+          let queried_count=await DataBaseService.getOrderCountByStatus(status)
+          console.log(queried_count)
+        total_count = await DataBaseService.getOrderCount()
         metadata = generatePaginationInfo(total_count, limit, page);
+        metadata.queried_count=queried_count
         orders = await DataBaseService.getOrdersByStatus(status, skip, limit);
       } else {
         total_count = await DataBaseService.getOrderCount();
