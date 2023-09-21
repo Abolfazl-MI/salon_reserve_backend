@@ -63,6 +63,11 @@ class AdminController {
   async getSingleUser(req, res, next) {
     try {
       let user = await DataBaseService.getSingleUser(req.params.id);
+      if(!user) {
+        return next({
+          status: 404,
+          message: "user not found",
+        });}
       return res.status(200).json({
         status: res.statusCode,
         user,
