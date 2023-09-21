@@ -541,6 +541,29 @@ class AdminController {
       next(e);
     }
   }
+  async updateOrderPayment(req,res,next){
+    try{
+      let{id,payment_method,payment_amount}=req.body
+      let order=await DataBaseService.getSingleOrder(id)
+      if(!order) next({status:404,message:'order not found'})
+      if(payment_amount>order.total_count){
+        next({status:400,message:'payment amount is greater than order total count'})
+      }
+      if(payment_method){
+        order.payment_method=payment_method
+      }
+      let remained_amount=order.total_count-payment_amount
+      order.remained_amount=remained_amount
+      order.payment_amount=payment_amount
+      await order.save()
+      return res.status(200).json({
+        statusCode:res.statusCode,
+        message:'order payment updated'
+      })
+    }catch(e){
+      next(e)
+    }
+  }
 }
 
 module.exports = {

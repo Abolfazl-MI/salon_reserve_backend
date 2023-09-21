@@ -166,9 +166,10 @@ class DatabaseService {
   // list of id would provide to delete
   async deleteManyOrderReservedTimesByOrderId(days_id) {
     return ReservedTimeModel.deleteMany({
-      _id:{$in:days_id}
-    })
+      _id: { $in: days_id },
+    });
   }
+
 }
 
 module.exports = {

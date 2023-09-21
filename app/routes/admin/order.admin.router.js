@@ -15,6 +15,7 @@ const { adminDeleteOrderValidation } = require("../../http/validations/order/del
 const { adminUpdateOrderStatusValidation } = require("../../http/validations/order/update-order-status.validation");
 const { adminUpdateReservedDaysValidation } = require("../../http/validations/order/update-reseved-days");
 const { adminDeleteOrderReserveDay } = require("../../http/validations/order/delete-reseve-days.validation");
+const { updateOrderPaymentValidation } = require("../../http/validations/order/updatt-payment-method");
 
 const router = express.Router();
 
@@ -60,6 +61,14 @@ router.route('/update-reserved-days').post(
   adminUpdateReservedDaysValidation(),
   validateRequest,
   AdminController.updateOrderReserveDays
+)
+router.route('/update-payment').post(
+  multer().none(),
+  authMiddleware,
+  authorizeAdmin,
+  updateOrderPaymentValidation(),
+  validateRequest,
+  AdminController.updateOrderPayment
 )
 router.route('/delete-reserved-days').delete(
   multer().none(),
