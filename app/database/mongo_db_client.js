@@ -146,6 +146,15 @@ class DatabaseService {
   async getSingleOrder(id) {
     return OrderModel.findById(id);
   }
+  async getSingleOrderWithPopulate(id) {
+    return OrderModel.findById(id).populate({
+      path: "user",
+      model: "user",
+    }).populate({
+      path:'salon',
+      model:'salon'
+    });
+  }
   async deleteOrderById(id) {
     return OrderModel.findByIdAndDelete(id);
   }
@@ -169,7 +178,18 @@ class DatabaseService {
       _id: { $in: days_id },
     });
   }
-
+  async getReservedDaysByOrderId(orderId,showIds=false) {
+    if(showIds){
+      return ReservedTimeModel.find({ order_id: orderId });
+    }else{
+      return ReservedTimeModel.find({ order_id: orderId },{
+        __v:false,
+        reserver_id:false,
+        salon_id:false,
+        order_id:false
+      });
+    }
+  }
 }
 
 module.exports = {

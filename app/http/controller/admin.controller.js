@@ -444,11 +444,17 @@ class AdminController {
   async getSingleOrder(req, res, next) {
     try {
       let id = req.params.id;
-      let order = await DataBaseService.getSingleOrder(id);
+      let order = await DataBaseService.getSingleOrderWithPopulate(id);
       if (!order) return next({ status: 404, message: "order not found" });
+      let reserved_days = await DataBaseService.getReservedDaysByOrderId(
+        order._id
+      )
       return res.status(200).json({
         statusCode: res.statusCode,
-        data: order,
+        data: {
+          order,
+          reserved_days
+        },
       });
     } catch (e) {
       next(e);
