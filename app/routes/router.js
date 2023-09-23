@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.use("/auth", authRouter);
 router.use("/user", userRouter);
-router.use("/salon", salonRouter);
+router.use("/salons", salonRouter);
 router.use("/admin", adminRouter);
 router.use("/order", orderRouter);
 

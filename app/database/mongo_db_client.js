@@ -199,10 +199,29 @@ class DatabaseService {
       );
     }
   }
-  async getUserByPhone(phone){
+  async getUserByPhone(phone) {
     return UserModel.findOne({
-      phone_number:phone
-    })
+      phone_number: phone,
+    });
+  }
+  async getReserveDaysBySalonId(salon_id, showIds = false) {
+    if (showIds) {
+      return ReservedTimeModel.find({
+        salon_id,
+      });
+    } else {
+      return ReservedTimeModel.find(
+        {
+          salon_id,
+        },
+        {
+          __v: false,
+          reserver_id: false,
+          salon_id: false,
+          order_id: false,
+        }
+      );
+    }
   }
 }
 
