@@ -6,26 +6,26 @@ const {
 } = require("../../http/middlewares/auth.mid");
 const {
   createSalonValidation,
-} = require("../../http/validations/salon/create-salon.validation");
+} = require("../../http/validations/admin/salon/create-salon.validation");
 const { validateRequest } = require("../../http/middlewares/validatror.mid");
 const { AdminController } = require("../../http/controller/admin.controller");
 const { imageMiddleWare } = require("../../http/middlewares/image.mid");
 let {
   getSingleSalonValidation,
-} = require("../../http/validations/salon/get-single-salon.validation");
+} = require("../../http/validations/admin/salon/get-single-salon.validation");
 const {
   deleteSalonValidation,
-} = require("../../http/validations/salon/delete-salon.validation");
+} = require("../../http/validations/admin/salon/delete-salon.validation");
 const multer = require("multer");
 const {
   updateSalonInfoValidation,
-} = require("../../http/validations/salon/update-salon-info.validation");
+} = require("../../http/validations/admin/salon/update-salon-info.validation");
 const {
   updateSalonImagesValidation,
-} = require("../../http/validations/salon/update-salon-images.validation");
+} = require("../../http/validations/admin/salon/update-salon-images.validation");
 const {
   deleteSalonImageValidation,
-} = require("../../http/validations/salon/delete-salon-images.validation");
+} = require("../../http/validations/admin/salon/delete-salon-images.validation");
 const router = express.Router();
 
 router.route("/create-salon").post(

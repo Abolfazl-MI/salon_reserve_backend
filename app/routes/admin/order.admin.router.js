@@ -5,17 +5,17 @@ const {
 } = require("../../http/middlewares/auth.mid");
 const {
   adminCreateOrderValidation,
-} = require("../../http/validations/order/create-order.validation");
+} = require("../../http/validations/admin/order/create-order.validation");
 const { validateRequest } = require("../../http/middlewares/validatror.mid");
 const { AdminController } = require("../../http/controller/admin.controller");
 let multer=require('multer');
-const { adminGetAllOrderValidation } = require("../../http/validations/order/get-all-order.validation");
-const {adminGetSingleOrderValidation} = require("../../http/validations/order/get-single-order.validation");
-const { adminDeleteOrderValidation } = require("../../http/validations/order/delete-order.validation");
-const { adminUpdateOrderStatusValidation } = require("../../http/validations/order/update-order-status.validation");
-const { adminUpdateReservedDaysValidation } = require("../../http/validations/order/update-reseved-days");
-const { adminDeleteOrderReserveDay } = require("../../http/validations/order/delete-reseve-days.validation");
-const { updateOrderPaymentValidation } = require("../../http/validations/order/updatt-payment-method");
+const { adminGetAllOrderValidation } = require("../../http/validations/admin/order/get-all-order.validation");
+const {adminGetSingleOrderValidation} = require("../../http/validations/admin/order/get-single-order.validation");
+const { adminDeleteOrderValidation } = require("../../http/validations/admin/order/delete-order.validation");
+const { adminUpdateOrderStatusValidation } = require("../../http/validations/admin/order/update-order-status.validation");
+const { adminUpdateReservedDaysValidation } = require("../../http/validations/admin/order/update-reseved-days");
+const { adminDeleteOrderReserveDay } = require("../../http/validations/admin/order/delete-reseve-days.validation");
+const { updateOrderPaymentValidation } = require("../../http/validations/admin/order/updatt-payment-method");
 
 const router = express.Router();
 

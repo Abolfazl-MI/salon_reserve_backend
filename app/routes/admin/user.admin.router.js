@@ -3,14 +3,14 @@ const router = express.Router();
 const multer = require("multer");
 const {
   createUserValidation,
-} = require("../../http/validations/user/create.user.validation");
+} = require("../../http/validations/admin/user/create.user.validation");
 const { validateRequest } = require("../../http/middlewares/validatror.mid");
 const { AdminController } = require("../../http/controller/admin.controller");
 const {
   getSingleUserValidation,
-} = require("../../http/validations/user/get-single-user.validation");
-const updateUserValidation = require("../../http/validations/user/update-user.validation");
-const deleteUserValidation = require("../../http/validations/user/delete-user.validation");
+} = require("../../http/validations/admin/user/get-single-user.validation");
+const updateUserValidation = require("../../http/validations/admin/user/update-user.validation");
+const deleteUserValidation = require("../../http/validations/admin/user/delete-user.validation");
 const {
   authMiddleware,
   authorizeAdmin,

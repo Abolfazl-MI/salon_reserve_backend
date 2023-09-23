@@ -4,13 +4,13 @@ const {
   authMiddleware,
   authorizeAdmin,
 } = require("../../http/middlewares/auth.mid");
-const createCouponCodeValidation = require("../../http/validations/coupon/create-coupon.validation");
+const createCouponCodeValidation = require("../../http/validations/admin/coupon/create-coupon.validation");
 const { validateRequest } = require("../../http/middlewares/validatror.mid");
 const { AdminController } = require("../../http/controller/admin.controller");
-const getAllCouponsValidation = require("../../http/validations/coupon/get-all-coupons.validation");
-const getSingleCouponValidation = require("../../http/validations/coupon/get-single-coupon.validation");
-const updateCouponValidation = require("../../http/validations/coupon/update-coupon.validation");
-const deleteCouponValidation = require("../../http/validations/coupon/delete-coupon.validation");
+const getAllCouponsValidation = require("../../http/validations/admin/coupon/get-all-coupons.validation");
+const getSingleCouponValidation = require("../../http/validations/admin/coupon/get-single-coupon.validation");
+const updateCouponValidation = require("../../http/validations/admin/coupon/update-coupon.validation");
+const deleteCouponValidation = require("../../http/validations/admin/coupon/delete-coupon.validation");
 const router = express.Router();
 
 router
