@@ -1,5 +1,8 @@
 const { DataBaseService } = require("../../database/mongo_db_client");
-const { generateUserToken, generatePaginationInfo } = require("../../utils/functions");
+const {
+  generateUserToken,
+  generatePaginationInfo,
+} = require("../../utils/functions");
 
 class UserController {
   async authorizeUser(req, res, next) {
@@ -121,6 +124,25 @@ class UserController {
         metadata,
         orders,
       });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async getSingleOrder(req, res, next) {
+    try {
+      let order_id = req.params.id;
+      let order = await DataBaseService.getSingleOrder(order_id);
+      if (!order) {
+        return next({ status: 404, message: "order not found" });
+      }
+      let reserve_days=await DataBaseService.getReservedDaysByOrderId(order._id)
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        data:{
+          order,
+          reserve_days
+        }
+      })
     } catch (e) {
       next(e);
     }
