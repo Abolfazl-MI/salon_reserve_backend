@@ -26,6 +26,18 @@ class UserController {
       next(e);
     }
   }
+  async completeProfile(req,res,next){
+    try{
+        let update_data=req.body
+        let updateUserData=await DataBaseService.updateUserData(update_data,req.user._id)
+        return res.status(200).json({
+            statusCode:res.statusCode,
+            message:"user updated successfully",
+        })
+    }catch(e){
+        next(e)
+    }
+  }
 }
 
 module.exports = {
