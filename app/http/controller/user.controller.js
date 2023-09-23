@@ -1,5 +1,5 @@
 const { DataBaseService } = require("../../database/mongo_db_client");
-const { generateUserToken } = require("../../utils/functions");
+const { generateUserToken, generatePaginationInfo } = require("../../utils/functions");
 
 class UserController {
   async authorizeUser(req, res, next) {
@@ -48,7 +48,7 @@ class UserController {
   }
   async createOrder(req, res, next) {
     try {
-      let { salon_id, reserve_days,coupon_code } = req.body;
+      let { salon_id, reserve_days, coupon_code } = req.body;
       let applied_coupon_discount;
       // get salon data
       let salon = await DataBaseService.getSingleSalon(salon_id);
@@ -75,10 +75,10 @@ class UserController {
       let total_count = salon_rent_cost * salon_reserved_days_length;
       // create order model
       let orderData = {
-          user:req.user._id,
-          salon: salon_id,
-          total_count,
-      }
+        user: req.user._id,
+        salon: salon_id,
+        total_count,
+      };
       if (applied_coupon_discount) {
         orderData.applied_coupon_discount = applied_coupon_discount;
       }
@@ -99,7 +99,28 @@ class UserController {
         statusCode: res.statusCode,
         message: "order created successfully",
         order,
-      })
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async getAllUserOrder(req, res, next) {
+    try {
+      let page = req.query.page || 0;
+      let limit = req.query.limit || 10;
+      let total_count = await DataBaseService.getUserOrdersCount(req.user._id);
+      let metadata = generatePaginationInfo(total_count, limit, page);
+      let skip = page * limit;
+      let orders = await DataBaseService.getUserOrdersWithPopulate(
+        req.user._id,
+        limit,
+        skip
+      );
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        metadata,
+        orders,
+      });
     } catch (e) {
       next(e);
     }

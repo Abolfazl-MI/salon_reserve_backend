@@ -223,6 +223,18 @@ class DatabaseService {
       );
     }
   }
+  async getUserOrdersWithPopulate(user_id,limit,skip) {
+    return OrderModel.find({
+      user: user_id,
+    })
+      .populate({
+        path: "salon",
+        model: "salon",
+      });
+  }
+  async getUserOrdersCount(user_id) {
+    return OrderModel.countDocuments({ user: user_id });
+  }
 }
 
 module.exports = {

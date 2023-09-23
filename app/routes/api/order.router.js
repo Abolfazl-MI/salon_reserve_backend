@@ -16,6 +16,11 @@ router.route('/create-order').post(
     UserController.createOrder
 )
 
+router.route('/').get(
+    authMiddleware,
+   UserController.getAllUserOrder
+)
+
 module.exports = {
     orderRouter: router
 }
