@@ -7,6 +7,7 @@ function createSalonValidation(req, res, next) {
       .optional()
       .custom((features, ctx) => {
         if (!features) throw "features should not be empty";
+        if(!Array.isArray(JSON.parse(features))) throw 'features should be list of string'
         return true;
       }),
     body("rent_cost")

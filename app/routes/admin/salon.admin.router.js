@@ -26,6 +26,7 @@ const {
 const {
   deleteSalonImageValidation,
 } = require("../../http/validations/admin/salon/delete-salon-images.validation");
+const { deleteSalonFeaturesValidation } = require("../../http/validations/admin/salon/delete-salon-feature.validation");
 const router = express.Router();
 
 router.route("/create-salon").post(
@@ -94,7 +95,14 @@ router
     validateRequest,
     AdminController.deleteSalonImage
   );
-  
+router.route("/delete-feature").delete(
+  multer().none(),
+  authMiddleware,
+  authorizeAdmin,
+  deleteSalonFeaturesValidation(),
+  validateRequest,
+  AdminController.deleteSalonFeatures
+)
 module.exports = {
   salonAdminRouter: router,
 };

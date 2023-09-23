@@ -1,6 +1,6 @@
 const { CouponModel } = require("../http/models/coupon.model");
 const { ReservedTimeModel } = require("../http/models/reserve.model");
-const { SalonModel } = require("../http/models/salon.model");
+const { SalonModel, FeatureModel } = require("../http/models/salon.model");
 const { UserModel } = require("../http/models/user.model");
 const { OrderModel } = require("../http/models/order.model");
 class DatabaseService {
@@ -83,7 +83,7 @@ class DatabaseService {
     return SalonModel.find({}, { __v: false }).limit(limit).skip(skip);
   }
   async getSingleSalon(id) {
-    return SalonModel.findById(id);
+    return SalonModel.findById(id).populate("features",{__v:false});
   }
   async deleteSalonById(id) {
     return SalonModel.findByIdAndDelete(id);
@@ -234,6 +234,12 @@ class DatabaseService {
   }
   async getUserOrdersCount(user_id) {
     return OrderModel.countDocuments({ user: user_id });
+  }
+  async createFeatureData(data){
+    return FeatureModel.create(data)
+  }
+  async deleteSalonFeature(data){
+    return FeatureModel.deleteMany({_id:{$in:data}})
   }
 }
 

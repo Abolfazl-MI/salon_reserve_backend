@@ -63,11 +63,12 @@ class AdminController {
   async getSingleUser(req, res, next) {
     try {
       let user = await DataBaseService.getSingleUser(req.params.id);
-      if(!user) {
+      if (!user) {
         return next({
           status: 404,
           message: "user not found",
-        });}
+        });
+      }
       return res.status(200).json({
         status: res.statusCode,
         user,
@@ -136,10 +137,10 @@ class AdminController {
       // check if type exists in query to query specific type
       let type = req.query.type;
       if (type) {
-        let queried_count=await DataBaseService.getCouponCount(type);
-        
+        let queried_count = await DataBaseService.getCouponCount(type);
+
         coupons = await DataBaseService.getCouponByStatus(limit, skip, type);
-        metadata.queried_count=queried_count
+        metadata.queried_count = queried_count;
       } else {
         coupons = await DataBaseService.getAllCoupons(limit, skip);
       }
@@ -201,7 +202,15 @@ class AdminController {
       data.rent_cost = rent_cost;
       data.area = req.body.area;
       if (features) {
-        data.features = features;
+        let salon_features = [];
+        let parsed_features = JSON.parse(features);
+        for (let description of parsed_features) {
+          let feature = await DataBaseService.createFeatureData({
+            description,
+          });
+          salon_features.push(feature);
+        }
+        data.features = salon_features;
       }
       if (Object.keys(req.files).length > 0) {
         let sent_images = req.files.images;
@@ -272,14 +281,29 @@ class AdminController {
   async updateSalonInfo(req, res, next) {
     try {
       let data = req.body;
+      let features = req.body.features;
       console.log(data);
       let salon_id = data.id;
       delete data.id;
       console.log(data);
+      let salon_features = [];
+      if (features) {
+        console.log(features);
+        for (let description of JSON.parse(features)) {
+          let feature = await DataBaseService.createFeatureData({
+            description,
+          });
+          console.log(feature);
+          salon_features.push(feature);
+        }
+        data.features = salon_features;
+      }
+      data.features = salon_features;
       let updatedSalon = await DataBaseService.updateSalonInfo(salon_id, data);
       return res.status(200).json({
         statusCode: res.statusCode,
         message: "salon info updated",
+
         updatedSalon,
       });
     } catch (e) {
@@ -432,11 +456,11 @@ class AdminController {
       let total_count;
       let status = req.query.status;
       if (status) {
-          let queried_count=await DataBaseService.getOrderCountByStatus(status)
-          console.log(queried_count)
-        total_count = await DataBaseService.getOrderCount()
+        let queried_count = await DataBaseService.getOrderCountByStatus(status);
+        console.log(queried_count);
+        total_count = await DataBaseService.getOrderCount();
         metadata = generatePaginationInfo(total_count, limit, page);
-        metadata.queried_count=queried_count
+        metadata.queried_count = queried_count;
         orders = await DataBaseService.getOrdersByStatus(status, skip, limit);
       } else {
         total_count = await DataBaseService.getOrderCount();
@@ -459,12 +483,12 @@ class AdminController {
       if (!order) return next({ status: 404, message: "order not found" });
       let reserved_days = await DataBaseService.getReservedDaysByOrderId(
         order._id
-      )
+      );
       return res.status(200).json({
         statusCode: res.statusCode,
         data: {
           order,
-          reserved_days
+          reserved_days,
         },
       });
     } catch (e) {
@@ -535,50 +559,69 @@ class AdminController {
       if (!order) {
         return next({ status: 404, message: "order not found" });
       }
-      let result=await DataBaseService.deleteManyOrderReservedTimesByOrderId(JSON.parse(reserve_days));
+      let result = await DataBaseService.deleteManyOrderReservedTimesByOrderId(
+        JSON.parse(reserve_days)
+      );
       // rent of salon, if coupon applied we should subtract it
-      let salon_real_rent
-      if(order.applied_coupon_discount){
-        salon_real_rent=order.total_count-order.applied_coupon_discount;
-      }else{
-        salon_real_rent=order.total_count;
+      let salon_real_rent;
+      if (order.applied_coupon_discount) {
+        salon_real_rent = order.total_count - order.applied_coupon_discount;
+      } else {
+        salon_real_rent = order.total_count;
       }
       // the length of days sent to remove
-      let removing_days_length=JSON.parse(reserve_days).length;
+      let removing_days_length = JSON.parse(reserve_days).length;
       // the count which is going to subtract
-      let subtracted_count=salon_real_rent*removing_days_length;
+      let subtracted_count = salon_real_rent * removing_days_length;
       // subtracting the count
-      order.total_count=order.total_count-subtracted_count;
+      order.total_count = order.total_count - subtracted_count;
       await order.save();
       return res.status(200).json({
         statusCode: res.statusCode,
         message: "order reserved days deleted",
-      })
+      });
     } catch (e) {
       next(e);
     }
   }
-  async updateOrderPayment(req,res,next){
-    try{
-      let{id,payment_method,payment_amount}=req.body
-      let order=await DataBaseService.getSingleOrder(id)
-      if(!order) next({status:404,message:'order not found'})
-      if(payment_amount>order.total_count){
-        next({status:400,message:'payment amount is greater than order total count'})
+  async updateOrderPayment(req, res, next) {
+    try {
+      let { id, payment_method, payment_amount } = req.body;
+      let order = await DataBaseService.getSingleOrder(id);
+      if (!order) next({ status: 404, message: "order not found" });
+      if (payment_amount > order.total_count) {
+        next({
+          status: 400,
+          message: "payment amount is greater than order total count",
+        });
       }
-      if(payment_method){
-        order.payment_method=payment_method
+      if (payment_method) {
+        order.payment_method = payment_method;
       }
-      let remained_amount=order.total_count-payment_amount
-      order.remained_amount=remained_amount
-      order.payment_amount=payment_amount
-      await order.save()
+      let remained_amount = order.total_count - payment_amount;
+      order.remained_amount = remained_amount;
+      order.payment_amount = payment_amount;
+      await order.save();
       return res.status(200).json({
-        statusCode:res.statusCode,
-        message:'order payment updated'
-      })
-    }catch(e){
-      next(e)
+        statusCode: res.statusCode,
+        message: "order payment updated",
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async deleteSalonFeatures(req, res, next) {
+    try {
+      let { features_id } = req.body;
+      let deleted_features = await DataBaseService.deleteSalonFeature(
+        JSON.parse(features_id)
+      );
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        message: "salon features deleted",
+      });
+    } catch (e) {
+      next(e);
     }
   }
 }
