@@ -28,7 +28,11 @@ class Application {
   }
   createServer() {
     http.createServer(this.#app).listen(this.#PORT);
-    console.log(`run on > http://localhost:${this.#PORT}`);
+    if(process.env.app_state=='dev'){
+      console.log(`run on > http://localhost:${this.#PORT}`);
+    }else{
+      console.log(`run on > https://pelato.iran.liara.run`);
+    }
   }
   connectDB() {
     //   handle the connection to mongoose if some thing happens like crash should db close on exit
@@ -57,6 +61,7 @@ class Application {
     });
     this.#app.use((err, req, res, next) => {
       // server err
+      console.log(err)
       const serverError = createHttpError.InternalServerError();
       const statusCode = err.status || serverError.statusCode;
       let message

@@ -94,7 +94,7 @@ function createUploadPath() {
     let createdPath=path.join("public","upload",'images')
     return createdPath;
   } else {
-    return "production path";
+    return "public/upload";
   }
 }
 module.exports = {
