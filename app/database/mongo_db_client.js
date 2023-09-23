@@ -199,6 +199,11 @@ class DatabaseService {
       );
     }
   }
+  async getUserByPhone(phone){
+    return UserModel.findOne({
+      phone_number:phone
+    })
+  }
 }
 
 module.exports = {

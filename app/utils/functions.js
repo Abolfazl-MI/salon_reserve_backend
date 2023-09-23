@@ -1,6 +1,6 @@
 let jwt = require("jsonwebtoken");
 let path = require("path");
-let fs=require('fs')
+let fs = require("fs");
 function validatorMapper(errors = []) {
   let message = {};
   errors.forEach((error) => {
@@ -79,9 +79,9 @@ function createUploadPath() {
   // check the appState is dev ?
   if (process.env.app_state == "dev") {
     let date = new Date();
-    let year = date.getFullYear()+ "";
-    let month = date.getMonth()+ "";
-    let day = date.getDate()+ "";
+    let year = date.getFullYear() + "";
+    let month = date.getMonth() + "";
+    let day = date.getDate() + "";
     let uploadPath = path.join(
       __dirname,
       "..",
@@ -91,16 +91,29 @@ function createUploadPath() {
       "images"
     );
     fs.mkdirSync(uploadPath, { recursive: true });
-    let createdPath=path.join("public","upload",'images')
+    let createdPath = path.join("public", "upload", "images");
     return createdPath;
   } else {
     return "public/upload";
   }
+}
+function generateUserToken(id) {
+  let token = jwt.sign(
+    {
+      id,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1y",
+    }
+  );
+  return token;
 }
 module.exports = {
   validatorMapper,
   generateOTP,
   generateCoupon,
   generatePaginationInfo,
-  createUploadPath
+  createUploadPath,
+  generateUserToken
 };
