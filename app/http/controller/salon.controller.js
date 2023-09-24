@@ -24,6 +24,7 @@ class SalonController {
         console.log(req.params)
         let {id}=req.params
         let salon=await DataBaseService.getSingleSalon(id)
+        console.log(salon)
         if(!salon){
             return next({status:404,message:"salon not found"})
         }

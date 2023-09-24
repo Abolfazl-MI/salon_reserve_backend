@@ -241,6 +241,11 @@ class DatabaseService {
   async deleteSalonFeature(data){
     return FeatureModel.deleteMany({_id:{$in:data}})
   }
+  async deleteReserveDaysByOrderId(orderId){
+    return ReservedTimeModel.deleteMany({
+      order_id:orderId
+    })
+  }
 }
 
 module.exports = {

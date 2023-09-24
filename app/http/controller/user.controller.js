@@ -131,7 +131,7 @@ class UserController {
   async getSingleOrder(req, res, next) {
     try {
       let order_id = req.params.id;
-      let order = await DataBaseService.getSingleOrder(order_id);
+      let order = await DataBaseService.getSingleOrderWithPopulate(order_id);
       if (!order) {
         return next({ status: 404, message: "order not found" });
       }
@@ -146,6 +146,28 @@ class UserController {
     } catch (e) {
       next(e);
     }
+  }
+  async updateOrderStatus(req,res,next){
+    try{
+      let{id,status}=req.body
+      let order=await DataBaseService.getSingleOrder(id)
+      if(!order){
+        return next({status:404,message:'order not found'})
+      }
+      if(status=='canceled'){
+        let delete_reserved_days=await DataBaseService.deleteReservedDaysByOrderId(id)
+        let update_order=await DataBaseService.updateOrderStatus(id,status)
+        return res.status(200).json({
+          statusCode:res.statusCode,
+          message:'order canceled successfully'
+        })
+      }else{
+        return res.status(403).json({
+          statusCode:res.statusCode,
+          message:'order not canceled'
+        })
+      }
+    }catch(e){}
   }
 }
 
