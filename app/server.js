@@ -2,7 +2,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
-const dotenv = require("dotenv");
+const dotenv = require("dotenv").config();
 const http = require("http");
 const createHttpError = require("http-errors");
 const { allRoutes } = require("./routes/router");
