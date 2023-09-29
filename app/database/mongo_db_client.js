@@ -80,7 +80,10 @@ class DatabaseService {
     return SalonModel.countDocuments();
   }
   async getAllSalons(limit, skip) {
-    return SalonModel.find({}, { __v: false }).limit(limit).skip(skip);
+    return SalonModel.find({}, { __v: false })
+      .limit(limit)
+      .skip(skip)
+      .populate("features", { __v: false });
   }
   async getSingleSalon(id) {
     return SalonModel.findById(id).populate("features", { __v: false });

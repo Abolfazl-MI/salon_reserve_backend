@@ -64,7 +64,7 @@ class UserController {
       // get all reserved time to
       let all_reserved_times = await DataBaseService.getAllReservedTimes();
       // sent days
-      let order_reserved_times = JSON.parse(reserve_days);
+      let order_reserved_times = reserve_days;
       // check if already reserved times
       for (let i = 0; i < order_reserved_times.length; i++) {
         let time_data = order_reserved_times[i];
@@ -97,7 +97,7 @@ class UserController {
           return next({ status: 404, message: "coupon has used before" });
         }
       }
-      let salon_reserved_days_length = JSON.parse(reserve_days).length;
+      let salon_reserved_days_length = reserve_days.length;
       // calculate total cost
       let total_count = salon_rent_cost * salon_reserved_days_length;
       // create order model
@@ -111,7 +111,7 @@ class UserController {
       }
       let order = await DataBaseService.createOrder(orderData);
       let salon_reserved_days_data = [];
-      for (let data of JSON.parse(reserve_days)) {
+      for (let data of reserve_days) {
         data.reserver_id = req.user._id;
         data.salon_id = salon_id;
         data.order_id = order._id;
@@ -122,7 +122,7 @@ class UserController {
       let salon_reserved_days = await DataBaseService.createManyReservedTime(
         salon_reserved_days_data
       );
-      return res.status(200).json({
+      return res.status(201).json({
         statusCode: res.statusCode,
         message: "order created successfully",
         order,
