@@ -83,7 +83,7 @@ class DatabaseService {
     return SalonModel.find({}, { __v: false }).limit(limit).skip(skip);
   }
   async getSingleSalon(id) {
-    return SalonModel.findById(id).populate("features",{__v:false});
+    return SalonModel.findById(id).populate("features", { __v: false });
   }
   async deleteSalonById(id) {
     return SalonModel.findByIdAndDelete(id);
@@ -223,28 +223,33 @@ class DatabaseService {
       );
     }
   }
-  async getUserOrdersWithPopulate(user_id,limit,skip) {
+  async getUserOrdersWithPopulate(user_id, limit, skip) {
     return OrderModel.find({
       user: user_id,
-    })
-      .populate({
-        path: "salon",
-        model: "salon",
-      });
+    }).populate({
+      path: "salon",
+      model: "salon",
+    });
   }
   async getUserOrdersCount(user_id) {
     return OrderModel.countDocuments({ user: user_id });
   }
-  async createFeatureData(data){
-    return FeatureModel.create(data)
+  async createFeatureData(data) {
+    return FeatureModel.create(data);
   }
-  async deleteSalonFeature(data){
-    return FeatureModel.deleteMany({_id:{$in:data}})
+  async deleteSalonFeature(data) {
+    return FeatureModel.deleteMany({ _id: { $in: data } });
   }
-  async deleteReserveDaysByOrderId(orderId){
+  async deleteReserveDaysByOrderId(orderId) {
     return ReservedTimeModel.deleteMany({
-      order_id:orderId
-    })
+      order_id: orderId,
+    });
+  }
+  async getAllReservedTimes() {
+    return ReservedTimeModel.find(
+      {},
+      { __v: false, reserver_id: false, salon_id: false, order_id: false }
+    );
   }
 }
 

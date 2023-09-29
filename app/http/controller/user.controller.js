@@ -59,6 +59,30 @@ class UserController {
       if (!salon) return next({ status: 404, message: "salon not found" });
       // variable to store salon rent
       let salon_rent_cost = salon.rent_cost;
+      // list of already reserve times
+      let already_reserved_times = [];
+      // get all reserved time to
+      let all_reserved_times = await DataBaseService.getAllReservedTimes();
+      // sent days
+      let order_reserved_times = JSON.parse(reserve_days);
+      // check if already reserved times
+      for (let i = 0; i < order_reserved_times.length; i++) {
+        let time_data = order_reserved_times[i];
+
+        let filtered_data = all_reserved_times.filter((data) => {
+          data.day == time_data.day;
+        });
+        if (filtered_data.includes(time_data)) {
+          already_reserved_times.push(time_data);
+        }
+      }
+      if (already_reserved_times.length > 0) {
+        return next({
+          status: 400,
+          message: "this days is already reserved",
+          data: already_reserved_times,
+        });
+      }
       // check if coupon code provided
       if (coupon_code) {
         // get coupon data from db
@@ -135,39 +159,42 @@ class UserController {
       if (!order) {
         return next({ status: 404, message: "order not found" });
       }
-      let reserve_days=await DataBaseService.getReservedDaysByOrderId(order._id)
+      let reserve_days = await DataBaseService.getReservedDaysByOrderId(
+        order._id
+      );
       return res.status(200).json({
         statusCode: res.statusCode,
-        data:{
+        data: {
           order,
-          reserve_days
-        }
-      })
+          reserve_days,
+        },
+      });
     } catch (e) {
       next(e);
     }
   }
-  async updateOrderStatus(req,res,next){
-    try{
-      let{id,status}=req.body
-      let order=await DataBaseService.getSingleOrder(id)
-      if(!order){
-        return next({status:404,message:'order not found'})
+  async updateOrderStatus(req, res, next) {
+    try {
+      let { id, status } = req.body;
+      let order = await DataBaseService.getSingleOrder(id);
+      if (!order) {
+        return next({ status: 404, message: "order not found" });
       }
-      if(status=='canceled'){
-        let delete_reserved_days=await DataBaseService.deleteReservedDaysByOrderId(id)
-        let update_order=await DataBaseService.updateOrderStatus(id,status)
+      if (status == "canceled") {
+        let delete_reserved_days =
+          await DataBaseService.deleteReservedDaysByOrderId(id);
+        let update_order = await DataBaseService.updateOrderStatus(id, status);
         return res.status(200).json({
-          statusCode:res.statusCode,
-          message:'order canceled successfully'
-        })
-      }else{
+          statusCode: res.statusCode,
+          message: "order canceled successfully",
+        });
+      } else {
         return res.status(403).json({
-          statusCode:res.statusCode,
-          message:'order not canceled'
-        })
+          statusCode: res.statusCode,
+          message: "order not canceled",
+        });
       }
-    }catch(e){}
+    } catch (e) {}
   }
 }
 
