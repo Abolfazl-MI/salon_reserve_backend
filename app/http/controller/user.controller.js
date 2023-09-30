@@ -59,30 +59,41 @@ class UserController {
       if (!salon) return next({ status: 404, message: "salon not found" });
       // variable to store salon rent
       let salon_rent_cost = salon.rent_cost;
-      // list of already reserve times
+      // get all reserved times by salon id
+      let reserved_days = await DataBaseService.getReserveDaysBySalonId(
+        salon._id
+      );
+      // already reserved times
       let already_reserved_times = [];
-      // get all reserved time to
-      let all_reserved_times = await DataBaseService.getAllReservedTimes();
-      // sent days
-      let order_reserved_times = reserve_days;
-      // check if already reserved times
-      for (let i = 0; i < order_reserved_times.length; i++) {
-        let time_data = order_reserved_times[i];
-
-        let filtered_data = all_reserved_times.filter((data) => {
-          data.day == time_data.day;
+      // iterate over list of reserved days sent from client with every
+      for (let index = 0; index < reserve_days.length; index++) {
+        // pick the data by index
+        let reserve_data = reserve_days[index];
+        // parse the data from string to Date
+        let reserve_day_date = new Date(reserve_data.day);
+        // filter the reserved times by day
+        let match_day = reserved_days.filter((item) => {
+          if (item.day.toISOString() === reserve_day_date.toISOString()) {
+            return true;
+          }
         });
-        if (filtered_data.includes(time_data)) {
-          already_reserved_times.push(time_data);
+        // finds similar time request for reserve
+        let similar_hours = match_day.find(
+          (item) => item.hours === reserve_data.hours
+        );
+        //  if found similar time request for reserve add to list
+        if (similar_hours) {
+          already_reserved_times.push(similar_hours);
         }
       }
+      // if already reserved times length is greater than 0 shows that we have reserved times before
       if (already_reserved_times.length > 0) {
         return next({
-          status: 400,
-          message: "this days is already reserved",
-          data: already_reserved_times,
+          status: 404,
+          message: "you have already reserved this times",
         });
       }
+
       // check if coupon code provided
       if (coupon_code) {
         // get coupon data from db
