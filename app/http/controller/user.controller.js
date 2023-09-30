@@ -207,6 +207,67 @@ class UserController {
       }
     } catch (e) {}
   }
+  async updateOrderDays(req, res, next) {
+    try{
+      let {order_id,days}=req.body
+      let order=await DataBaseService.getSingleOrder(order_id);
+      if(!order){
+        return next({status:404,message:"order not found"})
+      }
+      let salon=await DataBaseService.getSingleSalon(order.salon);
+      let salon_rent_cost=salon.rent_cost
+      let applied_coupon_discount=order.applied_coupon_discount;
+      if(applied_coupon_discount){
+        salon_rent_cost=salon_rent_cost-applied_coupon_discount
+      }
+      let reserved_days=await DataBaseService.getReservedDaysByOrderId(order._id,true)
+      let already_times=[]
+      for(let index=0;index<days.length;index++){
+          let reserved_day_data=days[index];
+          let reserved_day_date=new Date(reserved_day_data.day)
+          let matched_days=reserved_days.filter((item)=>{
+            if(item.day.toISOString()===reserved_day_date.toISOString()){
+              return true;
+            }
+          })
+          // finds similar time request for reserve
+        let similar_hours = match_day.find(
+          (item) => item.hours === reserve_data.hours
+        );
+        //  if found similar time request for reserve add to list
+        if (similar_hours) {
+          already_times.push(similar_hours);
+        }
+      }
+      if(already_times.length>0){
+        return next({status:404,message:"you have already reserved this times"})
+      }
+    //  calculate newly days count added to salon
+    let added_days_count=days.length*salon_rent_cost;
+    // update order total count
+    order.total_count=order.total_count+added_days_count
+    await order.save();
+    // create reserve time 
+    let salon_reserved_days_data = [];
+    for (let data of days) {
+      data.reserver_id = req.user._id;
+      data.salon_id = salon_id;
+      data.order_id = order._id;
+      salon_reserved_days_data.push(data);
+    }
+    console.log(salon_reserved_days_data);
+    // create reserved days model
+    let salon_reserved_days = await DataBaseService.createManyReservedTime(
+      salon_reserved_days_data
+    );
+    return res.status(200).json({
+      statusCode: res.statusCode,
+      message: "order updated successfully",
+    })
+    }catch(e){
+      next(e)
+    }
+  }
 }
 
 module.exports = {
