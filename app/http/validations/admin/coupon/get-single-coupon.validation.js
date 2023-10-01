@@ -1,10 +1,10 @@
-let {param}=require("express-validator");
+let { param } = require("express-validator");
 function getSingleCouponValidation(req, res, next) {
-    return [
-        param("id")
-            .notEmpty()
-            .withMessage("id is required")
-            .isMongoId().withMessage('provided id must be be valid'),
-    ];
+  return [
+    param("code")
+      .exists()
+      .notEmpty()
+      .withMessage("coupon code should not be empty"),
+  ];
 }
-module.exports=getSingleCouponValidation
+module.exports = getSingleCouponValidation;

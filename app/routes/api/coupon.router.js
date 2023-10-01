@@ -6,7 +6,7 @@ const { authMiddleware } = require("../../http/middlewares/auth.mid");
 const router = express.Router();
 
 router
-  .route("/single/:id")
+  .route("/single/:code")
   .get(
     authMiddleware,
     getSingleCouponValidation(),

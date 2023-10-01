@@ -202,6 +202,9 @@ class DatabaseService {
       );
     }
   }
+  async getCouponByCode(code){
+    return CouponModel.findOne({code})
+  }
   async getUserByPhone(phone) {
     return UserModel.findOne({
       phone_number: phone,

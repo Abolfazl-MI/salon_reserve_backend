@@ -155,8 +155,9 @@ class AdminController {
   }
   async getSingleCoupon(req, res, next) {
     try {
-      let coupon_id = req.params.id;
-      let coupon = await DataBaseService.getSingleCoupon(coupon_id);
+      let coupon_code = req.params.code;
+      let coupon = await DataBaseService.getCouponByCode(coupon_code)
+      console.log(coupon);
       if (!coupon) return next({ status: 404, message: "coupon not found" });
       return res.status(200).json({
         status: res.statusCode,

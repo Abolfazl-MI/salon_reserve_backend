@@ -33,7 +33,7 @@ router
     AdminController.getAllCoupons
   );
 router
-  .route("/single/:id")
+  .route("/single/:code")
   .get(
     authMiddleware,
     authorizeAdmin,
