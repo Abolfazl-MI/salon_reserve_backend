@@ -232,7 +232,7 @@ class DatabaseService {
   async getUserOrdersWithPopulate(user_id, limit, skip) {
     return OrderModel.find({
       user: user_id,
-    }).populate({
+    }).limit(limit).skip(skip).populate({
       path: "salon",
       model: "salon",
       select:"-features",
