@@ -191,21 +191,16 @@ class UserController {
       if (!order) {
         return next({ status: 404, message: "order not found" });
       }
-      if (status == "canceled") {
-        let delete_reserved_days =
-          await DataBaseService.deleteReservedDaysByOrderId(id);
-        let update_order = await DataBaseService.updateOrderStatus(id, status);
-        return res.status(200).json({
-          statusCode: res.statusCode,
-          message: "order canceled successfully",
-        });
-      } else {
-        return res.status(403).json({
-          statusCode: res.statusCode,
-          message: "order not canceled",
-        });
-      }
-    } catch (e) {}
+      order.status=status;
+      await order.save()
+      return res.status(200).json({
+        statusCode: res.statusCode,
+        message: "order status updated",
+        data: order
+      })
+    } catch (e) {
+      next(e)
+    }
   }
   async updateOrderDays(req, res, next) {
     try{
@@ -231,8 +226,8 @@ class UserController {
             }
           })
           // finds similar time request for reserve
-        let similar_hours = match_day.find(
-          (item) => item.hours === reserve_data.hours
+        let similar_hours = matched_days.find(
+          (item) => item.hours === reserved_day_data.hours
         );
         //  if found similar time request for reserve add to list
         if (similar_hours) {
@@ -251,7 +246,7 @@ class UserController {
     let salon_reserved_days_data = [];
     for (let data of days) {
       data.reserver_id = req.user._id;
-      data.salon_id = salon_id;
+      data.salon_id = salon._id;
       data.order_id = order._id;
       salon_reserved_days_data.push(data);
     }
