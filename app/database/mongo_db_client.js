@@ -162,6 +162,7 @@ class DatabaseService {
       .populate({
         path: "salon",
         model: "salon",
+        select:"-features",
       });
   }
   async deleteOrderById(id) {
