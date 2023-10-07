@@ -162,7 +162,7 @@ class DatabaseService {
       .populate({
         path: "salon",
         model: "salon",
-        select:"-features",
+        select: "-features",
       });
   }
   async deleteOrderById(id) {
@@ -203,8 +203,8 @@ class DatabaseService {
       );
     }
   }
-  async getCouponByCode(code){
-    return CouponModel.findOne({code})
+  async getCouponByCode(code) {
+    return CouponModel.findOne({ code });
   }
   async getUserByPhone(phone) {
     return UserModel.findOne({
@@ -233,11 +233,14 @@ class DatabaseService {
   async getUserOrdersWithPopulate(user_id, limit, skip) {
     return OrderModel.find({
       user: user_id,
-    }).limit(limit).skip(skip).populate({
-      path: "salon",
-      model: "salon",
-      select:"-features",
-    });
+    })
+      .limit(limit)
+      .skip(skip)
+      .populate({
+        path: "salon",
+        model: "salon",
+        select: "-features",
+      });
   }
   async getUserOrdersCount(user_id) {
     return OrderModel.countDocuments({ user: user_id });
@@ -258,6 +261,24 @@ class DatabaseService {
       {},
       { __v: false, reserver_id: false, salon_id: false, order_id: false }
     );
+  }
+  async updateManyReserveDaysStatus(orderId, status) {
+    return ReservedTimeModel.updateMany(
+      {
+        order_id: orderId,
+      },
+      {
+        $set: {
+          status,
+        },
+      },
+      { new: true }
+    );
+  }
+  async deleteManyReserveDaysByOrderId(orderId){
+    return ReservedTimeModel.deleteMany({
+      order_id:orderId
+    })
   }
 }
 

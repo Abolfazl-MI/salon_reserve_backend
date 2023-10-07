@@ -156,7 +156,7 @@ class AdminController {
   async getSingleCoupon(req, res, next) {
     try {
       let coupon_code = req.params.code;
-      let coupon = await DataBaseService.getCouponByCode(coupon_code)
+      let coupon = await DataBaseService.getCouponByCode(coupon_code);
       console.log(coupon);
       if (!coupon) return next({ status: 404, message: "coupon not found" });
       return res.status(200).json({
@@ -511,7 +511,28 @@ class AdminController {
   async updateOrderStatus(req, res, next) {
     try {
       let { status, id } = req.body;
-      await DataBaseService.updateOrderStatus(id, status);
+      let order = await DataBaseService.getSingleOrder(id);
+      if (!order) {
+        return next({ status: 404, message: "Order not found" });
+      }
+      // await DataBaseService.updateOrderStatus(id, status);
+      order.status = status;
+      await order.save();
+      if (status === "completed") {
+        let result = await DataBaseService.updateManyReserveDaysStatus(
+          order._id,
+          "full"
+        );
+        console.log(result);ر
+      }
+      if(status==='canceled'){
+        let result= await DataBaseService.updateManyReserveDaysStatus(order._id,'canceled')
+        console.log(result)
+      }
+      if(status==='pending'){
+        let result= await DataBaseService.updateManyReserveDaysStatus(order._id,'reserved')
+        console.log(result)
+      }
       return res.status(200).json({
         statusCode: res.statusCode,
         message: "order status updated",
