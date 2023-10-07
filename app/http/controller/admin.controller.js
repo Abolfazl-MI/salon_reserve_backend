@@ -523,7 +523,7 @@ class AdminController {
           order._id,
           "full"
         );
-        console.log(result);ر
+        console.log(result);
       }
       if(status==='canceled'){
         let result= await DataBaseService.updateManyReserveDaysStatus(order._id,'canceled')
