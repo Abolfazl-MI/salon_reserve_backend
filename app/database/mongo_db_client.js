@@ -156,10 +156,6 @@ class DatabaseService {
   async getSingleOrderWithPopulate(id) {
     return OrderModel.findById(id)
       .populate({
-        path: "user",
-        model: "user",
-      })
-      .populate({
         path: "salon",
         model: "salon",
         select: "-features",
