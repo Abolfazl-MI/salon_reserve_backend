@@ -193,6 +193,21 @@ class UserController {
       }
       order.status=status;
       await order.save()
+      if (status === "completed") {
+        let result = await DataBaseService.updateManyReserveDaysStatus(
+          order._id,
+          "full"
+        );
+        console.log(result);
+      }
+      if(status==='canceled'){
+        let result= await DataBaseService.updateManyReserveDaysStatus(order._id,'canceled')
+        console.log(result)
+      }
+      if(status==='pending'){
+        let result= await DataBaseService.updateManyReserveDaysStatus(order._id,'reserved')
+        console.log(result)
+      }
       return res.status(200).json({
         statusCode: res.statusCode,
         message: "order status updated",
