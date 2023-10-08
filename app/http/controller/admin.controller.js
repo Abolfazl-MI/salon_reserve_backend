@@ -560,13 +560,19 @@ class AdminController {
         );
         console.log(result);
       }
-      if(status==='canceled'){
-        let result= await DataBaseService.updateManyReserveDaysStatus(order._id,'canceled')
-        console.log(result)
+      if (status === "canceled") {
+        let result = await DataBaseService.updateManyReserveDaysStatus(
+          order._id,
+          "canceled"
+        );
+        console.log(result);
       }
-      if(status==='pending'){
-        let result= await DataBaseService.updateManyReserveDaysStatus(order._id,'reserved')
-        console.log(result)
+      if (status === "pending") {
+        let result = await DataBaseService.updateManyReserveDaysStatus(
+          order._id,
+          "reserved"
+        );
+        console.log(result);
       }
       return res.status(200).json({
         statusCode: res.statusCode,
@@ -587,17 +593,37 @@ class AdminController {
       if (!order) {
         return next({ status: 404, message: "order not found" });
       }
-      let salon_reserved_days_length = JSON.parse(reserve_days).length;
-      let updated_total_count = salon.rent_cost * salon_reserved_days_length;
-      order.total_count = updated_total_count;
+      // delete pervious reserved days
+      let delete_result = await DataBaseService.deleteManyReserveDaysByOrderId(
+        order._id
+      );
+      // store rent cost in variable to access later
+      let salon_rent_cost = salon.rent_cost;
+      // get the applied coupon code
+      let applied_coupon_discount = order.applied_coupon_discount;
+      // check if the applied coupon exists to subtract it from total cost
+      if (applied_coupon_discount) {
+        salon_rent_cost = salon_rent_cost - applied_coupon_discount;
+      }
+
+      // parse the sended days
+      let days = JSON.parse(reserve_days);
+      // recalculate cost
+      let updated_cost = days.length * salon_rent_cost;
+      // update order
+      order.total_count = updated_cost;
+      // save updates
       await order.save();
+      // create reserve time list
       let salon_reserved_days_data = [];
-      for (let data of JSON.parse(reserve_days)) {
+      // iterate over the days to create data object need for reserved model type
+      for (let data of days) {
         data.reserver_id = order.user;
         data.salon_id = salon._id;
         data.order_id = order._id;
         salon_reserved_days_data.push(data);
       }
+      // create new reserved days
       let salon_reserved_days = await DataBaseService.createManyReservedTime(
         salon_reserved_days_data
       );

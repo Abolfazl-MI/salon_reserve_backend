@@ -230,32 +230,36 @@ class UserController {
       if(applied_coupon_discount){
         salon_rent_cost=salon_rent_cost-applied_coupon_discount
       }
-      let reserved_days=await DataBaseService.getReservedDaysByOrderId(order._id,true)
-      let already_times=[]
-      for(let index=0;index<days.length;index++){
-          let reserved_day_data=days[index];
-          let reserved_day_date=new Date(reserved_day_data.day)
-          let matched_days=reserved_days.filter((item)=>{
-            if(item.day.toISOString()===reserved_day_date.toISOString()){
-              return true;
-            }
-          })
-          // finds similar time request for reserve
-        let similar_hours = matched_days.find(
-          (item) => item.hours === reserved_day_data.hours
-        );
-        //  if found similar time request for reserve add to list
-        if (similar_hours) {
-          already_times.push(similar_hours);
-        }
-      }
-      if(already_times.length>0){
-        return next({status:404,message:"you have already reserved this times"})
-      }
-    //  calculate newly days count added to salon
+      // delete pervious reserve days
+      let delete_result=await DataBaseService.deleteManyOrderReservedTimesByOrderId(order._id)
+        console.log('delete result')
+      // 
+    //   let reserved_days=await DataBaseService.getReservedDaysByOrderId(order._id,true)
+    //   let already_times=[]
+    //   for(let index=0;index<days.length;index++){
+    //       let reserved_day_data=days[index];
+    //       let reserved_day_date=new Date(reserved_day_data.day)
+    //       let matched_days=reserved_days.filter((item)=>{
+    //         if(item.day.toISOString()===reserved_day_date.toISOString()){
+    //           return true;
+    //         }
+    //       })
+    //       // finds similar time request for reserve
+    //     let similar_hours = matched_days.find(
+    //       (item) => item.hours === reserved_day_data.hours
+    //     );
+    //     //  if found similar time request for reserve add to list
+    //     if (similar_hours) {
+    //       already_times.push(similar_hours);
+    //     }
+    //   }
+    //   if(already_times.length>0){
+    //     return next({status:404,message:"you have already reserved this times"})
+    //   }
+    // //  calculate newly days count added to salon
     let added_days_count=days.length*salon_rent_cost;
     // update order total count
-    order.total_count=order.total_count+added_days_count
+    order.total_count=added_days_count
     await order.save();
     // create reserve time 
     let salon_reserved_days_data = [];
@@ -265,7 +269,7 @@ class UserController {
       data.order_id = order._id;
       salon_reserved_days_data.push(data);
     }
-    console.log(salon_reserved_days_data);
+    // console.log(salon_reserved_days_data);
     // create reserved days model
     let salon_reserved_days = await DataBaseService.createManyReservedTime(
       salon_reserved_days_data
