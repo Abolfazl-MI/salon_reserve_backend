@@ -1,6 +1,7 @@
 // require express
 const express = require("express");
 const mongoose = require("mongoose");
+const path=require('path')
 const morgan = require("morgan");
 const dotenv = require("dotenv").config();
 const http = require("http");
@@ -21,10 +22,12 @@ class Application {
   }
 
   configureApplication() {
+    let static_path=path.join(__dirname,'..','public')
+    console.log(static_path)
+    this.#app.use(express.static(static_path));
     this.#app.use(morgan("dev"));
     this.#app.use(express.json());
     this.#app.use(express.urlencoded({ extended: true, limit: "50mb",parameterLimit:100000 }));
-    this.#app.use(express.static("public"));
   }
   createServer() {
     http.createServer(this.#app).listen(this.#PORT);
