@@ -296,6 +296,13 @@ class AdminController {
       let features = req.body.features;
       console.log(data);
       let salon_id = data.id;
+      let salon=await DataBaseService.getSingleSalon(salon_id)
+      if(!salon){
+        return next({
+          status:404,
+          message:'salon not found'
+        })
+      }
       delete data.id;
       console.log(data);
       let salon_features = [];
