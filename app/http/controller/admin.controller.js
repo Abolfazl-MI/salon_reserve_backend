@@ -81,6 +81,10 @@ class AdminController {
     try {
       let passed_data = req.body;
       let user_id = passed_data.user_id;
+      let user = await DataBaseService.getSingleUser(user_id);
+      if (!user) {
+        return next({ status: 404, message: "user not found" });
+      }
       delete passed_data.user_id;
       // TODO COUPON UPDATE DISCUSS
       let updateUserData = await DataBaseService.updateUserData(
@@ -257,15 +261,17 @@ class AdminController {
     try {
       let id = req.params.id;
       let salon = await DataBaseService.getSingleSalon(id);
-      let salon_id=salon._id
-      let reserved_days=await DataBaseService.getReserveDaysBySalonId(salon_id)
+      let salon_id = salon._id;
+      let reserved_days = await DataBaseService.getReserveDaysBySalonId(
+        salon_id
+      );
       if (!salon) return next({ status: 404, message: "salon not found" });
       console.log(salon);
       return res.status(200).json({
         statusCode: res.statusCode,
         data: {
           salon,
-          reserved_days
+          reserved_days,
         },
       });
     } catch (e) {
