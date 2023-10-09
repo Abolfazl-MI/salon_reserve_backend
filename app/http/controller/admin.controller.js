@@ -257,11 +257,16 @@ class AdminController {
     try {
       let id = req.params.id;
       let salon = await DataBaseService.getSingleSalon(id);
+      let salon_id=salon._id
+      let reserved_days=await DataBaseService.getReserveDaysBySalonId(salon_id)
       if (!salon) return next({ status: 404, message: "salon not found" });
       console.log(salon);
       return res.status(200).json({
         statusCode: res.statusCode,
-        data: salon,
+        data: {
+          salon,
+          reserved_days
+        },
       });
     } catch (e) {
       next(e);
