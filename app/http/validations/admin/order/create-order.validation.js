@@ -12,9 +12,29 @@ function adminCreateOrderValidation(req, res, next) {
       .withMessage("user is should not be empty")
       .isMongoId()
       .withMessage("user id is invalid"),
-    body("reserve_days")
-      .notEmpty()
-      .withMessage("reserve_days must not be empty"),
+    body("reserve_days").custom((reserved_days, ctx) => {
+      if(!reserved_days){
+        throw 'reserve days must not be empty'
+      }
+      if(Array.isArray(reserved_days)){
+        let is_valid=reserved_days.every((item)=>item.hasOwnProperty("hours") && item.hasOwnProperty("day"))
+        if(!is_valid){
+          throw 'invalid reserved days format'
+        }
+        return true
+      }else{
+        try{
+          let parsed_data=JSON.parse(reserved_days)
+          let is_valid=parsed_data.every((item)=>item.hasOwnProperty("hours") && item.hasOwnProperty("day"))
+          if(!is_valid){
+            throw 'invalid reserved days format'
+          }
+          return true
+        }catch(e){
+          throw e+""
+        }
+      }
+    }),
     body("coupon_code")
       .optional()
       .notEmpty()

@@ -400,7 +400,7 @@ class AdminController {
       // variable to store salon rent
       let salon_rent_cost = salon.rent_cost;
       // get all reserved times by salon id
-      let reserved_days = await DataBaseService.getReserveDaysBySalonId(
+      let already_reserved_days = await DataBaseService.getReserveDaysBySalonId(
         salon._id
       );
       // already reserved times
@@ -412,7 +412,7 @@ class AdminController {
         // parse the data from string to Date
         let reserve_day_date = new Date(reserve_data.day);
         // filter the reserved times by day
-        let match_day = reserved_days.filter((item) => {
+        let match_day = already_reserved_days.filter((item) => {
           if (item.day.toISOString() === reserve_day_date.toISOString()) {
             return true;
           }
@@ -448,7 +448,7 @@ class AdminController {
           return next({ status: 404, message: "coupon has used before" });
         }
       }
-      let salon_reserved_days_length = JSON.parse(reserve_days).length;
+      let salon_reserved_days_length = reserve_days.length;
       // calculate total cost
       let total_count = salon_rent_cost * salon_reserved_days_length;
 
@@ -479,7 +479,7 @@ class AdminController {
       let order = await DataBaseService.createOrder(orderData);
       // for creating model which contains salon id and user id , iterate over and create data model
       let salon_reserved_days_data = [];
-      for (let data of JSON.parse(reserve_days)) {
+      for (let data of reserve_days) {
         data.reserver_id = user_id;
         data.salon_id = salon_id;
         data.order_id = order._id;

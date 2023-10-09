@@ -22,7 +22,6 @@ const router = express.Router();
 router
   .route("/create-order")
   .post(
-    multer().none(),
     authMiddleware,
     authorizeAdmin,
     adminCreateOrderValidation(),
