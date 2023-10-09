@@ -118,7 +118,7 @@ class AdminController {
         coupon_code,
         coupon_discount
       );
-      return res.status(200).json({
+      return res.status(201).json({
         statusCode: res.statusCode,
         data: coupon,
       });
