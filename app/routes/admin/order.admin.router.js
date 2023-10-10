@@ -54,7 +54,6 @@ router.route('/update-status').post(
   AdminController.updateOrderStatus
 )
 router.route('/update-reserved-days').post(
-  multer().none(),
   authMiddleware,
   authorizeAdmin,
   adminUpdateReservedDaysValidation(),

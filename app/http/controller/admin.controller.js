@@ -625,7 +625,7 @@ class AdminController {
       }
 
       // parse the sended days
-      let days = JSON.parse(reserve_days);
+      let days = reserve_days;
       // recalculate cost
       let updated_cost = days.length * salon_rent_cost;
       // update order
