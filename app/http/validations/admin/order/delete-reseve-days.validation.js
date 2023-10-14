@@ -16,18 +16,28 @@ function adminDeleteOrderReserveDay(req, res, next) {
     ),
     body('reserve_days').custom(
         (reserve_days,ctx)=>{
-          console.log(reserve_days)
-            if(!reserve_days){
-                throw "reserve days should not be empty"
+          let parsed_data;
+          if (!value) {
+            throw "reserved days should not be empty";
+          }
+          if (typeof value === "string" || value instanceof String) {
+            try {
+              parsed_data = JSON.parse(value);
+            } catch (e) {
+              throw e;
             }
-            let parsed_data=JSON.parse(reserve_days)
-            
-            let id_pattern=/^[0-9a-fA-F]{24}$/
-           let is_valid= parsed_data.every((item)=>id_pattern.test(item))
-           if(!is_valid){
-               throw "invalid reserve days id format"
-           }
-           return true
+          } else if (Array.isArray(value)) {
+            parsed_data=value
+          }else{
+            throw 'unsupported data type'
+          }
+          let is_valid = parsed_data.every(
+            (item) => item.hasOwnProperty("hours") && item.hasOwnProperty("day")
+          );
+          if (!is_valid) {
+            throw "invalid reserved data";
+          }
+          return true;
         }
     )
   ];
