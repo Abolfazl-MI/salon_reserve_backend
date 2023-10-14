@@ -11,10 +11,21 @@ function adminUpdateReservedDaysValidation(req, res, next) {
       .notEmpty()
       .withMessage("reserve_days must not be empty")
       .custom((value, ctx) => {
+        let parsed_data;
         if (!value) {
           throw "reserved days should not be empty";
         }
-        let parsed_data = JSON.parse(value);
+        if (typeof value === "string" || value instanceof String) {
+          try {
+            parsed_data = JSON.parse(value);
+          } catch (e) {
+            throw e;
+          }
+        } else if (Array.isArray(value)) {
+          parsed_data=value
+        }else{
+          throw 'unsupported data type'
+        }
         let is_valid = parsed_data.every(
           (item) => item.hasOwnProperty("hours") && item.hasOwnProperty("day")
         );
