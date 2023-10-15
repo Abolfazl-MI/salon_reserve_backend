@@ -142,10 +142,32 @@ class DatabaseService {
     return OrderModel.countDocuments();
   }
   async getOrdersByStatus(status, skip, limit) {
-    return OrderModel.find({ status }, { __v: false }).skip(skip).limit(limit);
+    return OrderModel.find({ status }, { __v: false })
+      .populate({
+        path: "salon",
+        model: "salon",
+        select: "-features",
+      })
+      .populate({
+        path: "user",
+        model: "user",
+      })
+      .skip(skip)
+      .limit(limit);
   }
   async getAllOrders(skip, limit) {
-    return OrderModel.find({}, { __v: false }).skip(skip).limit(limit);
+    return OrderModel.find({}, { __v: false })
+      .populate({
+        path: "salon",
+        model: "salon",
+        select: "-features",
+      })
+      .populate({
+        path: "user",
+        model: "user",
+      })
+      .skip(skip)
+      .limit(limit);
   }
   async getOrderCountByStatus(status) {
     return OrderModel.countDocuments({ status });
@@ -154,12 +176,11 @@ class DatabaseService {
     return OrderModel.findById(id);
   }
   async getSingleOrderWithPopulate(id) {
-    return OrderModel.findById(id)
-      .populate({
-        path: "salon",
-        model: "salon",
-        select: "-features",
-      });
+    return OrderModel.findById(id).populate({
+      path: "salon",
+      model: "salon",
+      select: "-features",
+    });
   }
   async deleteOrderById(id) {
     return OrderModel.findByIdAndDelete(id);
@@ -271,12 +292,11 @@ class DatabaseService {
       { new: true }
     );
   }
-  async deleteManyReserveDaysByOrderId(orderId){
+  async deleteManyReserveDaysByOrderId(orderId) {
     return ReservedTimeModel.deleteMany({
-      order_id:orderId
-    })
+      order_id: orderId,
+    });
   }
-
 }
 
 module.exports = {
