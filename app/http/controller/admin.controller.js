@@ -630,6 +630,12 @@ class AdminController {
       let updated_cost = days.length * salon_rent_cost;
       // update order
       order.total_count = updated_cost;
+      // check if order wan installment to update the payment values
+       if(order.payment_method==='installment'){
+        // update the remained amount  
+        let updated_remained_cost=order.total_count-order.payment_amount
+        order.remained_amount=updated_remained_cost
+       }
       // save updates
       await order.save();
       // create reserve time list
@@ -671,11 +677,19 @@ class AdminController {
         salon_real_rent = order.total_count;
       }
       // the length of days sent to remove
-      let removing_days_length = JSON.parse(reserve_days).length;
+      let removing_days_length = reserve_days.length;
       // the count which is going to subtract
       let subtracted_count = salon_real_rent * removing_days_length;
       // subtracting the count
       order.total_count = order.total_count - subtracted_count;
+      // if payment method was installment to update the values
+      if(order.payment_method==='installment'){
+        let updated_remained_cost=order.total_count-order.payment_amount
+        if(updated_remained_cost<0){
+          return next({status:403,message:"not accessible!"})
+        }
+        order.remained_amount=updated_remained_cost
+      }
       await order.save();
       return res.status(200).json({
         statusCode: res.statusCode,
