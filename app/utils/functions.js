@@ -14,7 +14,7 @@ function generateOTP() {
 }
 function generateAdminToken() {
   let token = jwt.sign(
-    { id: "65021d9878a4b27020a87ff6" },
+    { id: "6555d4549f5141548c525cf1" },
     process.env.JWT_SECRET
   );
   console.log(token);
@@ -77,7 +77,6 @@ function generatePaginationInfo(total_count, limit, page) {
 // TODO PRODUCTION PATH SHOULD SET
 function createUploadPath() {
   // check the appState is dev ?
-  if (process.env.app_state == "dev") {
     let date = new Date();
     let year = date.getFullYear() + "";
     let month = date.getMonth() + "";
@@ -93,9 +92,7 @@ function createUploadPath() {
     fs.mkdirSync(uploadPath, { recursive: true });
     let createdPath = path.join("public", "upload", "images");
     return createdPath;
-  } else {
-    return "public/upload";
-  }
+  
 }
 function generateUserToken(id) {
   let token = jwt.sign(

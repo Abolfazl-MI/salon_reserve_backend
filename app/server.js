@@ -34,7 +34,7 @@ class Application {
     if(process.env.app_state=='dev'){
       console.log(`run on > http://localhost:${this.#PORT}`);
     }else{
-      console.log(`run on > https://pelato.iran.liara.run`);
+      console.log(`run on > https://pelato-markazi.chbk.run`);
     }
   }
   connectDB() {
