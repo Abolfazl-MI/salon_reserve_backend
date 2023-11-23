@@ -240,7 +240,7 @@ class DatabaseService {
         },
         {
           __v: false,
-          reserver_id: false,
+          // reserver_id: false,
           salon_id: false,
           order_id: false,
         }
