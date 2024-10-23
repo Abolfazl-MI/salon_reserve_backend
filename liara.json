@@ -1,0 +1,9 @@
+{
+    "disks":[
+        {
+            "name":"uploads",
+            "mountTo":"public/upload"
+        }
+    ],
+    "app":"pelato"
+}

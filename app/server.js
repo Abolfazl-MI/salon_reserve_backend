@@ -1,8 +1,9 @@
 // require express
 const express = require("express");
 const mongoose = require("mongoose");
+const path=require('path')
 const morgan = require("morgan");
-const dotenv = require("dotenv");
+const dotenv = require("dotenv").config();
 const http = require("http");
 const createHttpError = require("http-errors");
 const { allRoutes } = require("./routes/router");
@@ -21,14 +22,20 @@ class Application {
   }
 
   configureApplication() {
+    let static_path=path.join(__dirname,'..','public')
+    console.log(static_path)
+    this.#app.use(express.static(static_path));
     this.#app.use(morgan("dev"));
     this.#app.use(express.json());
-    this.#app.use(express.urlencoded({ extended: true }));
-    this.#app.use(express.static("public"));
+    this.#app.use(express.urlencoded({ extended: true, limit: "50mb",parameterLimit:100000 }));
   }
   createServer() {
     http.createServer(this.#app).listen(this.#PORT);
-    console.log(`run on > http://localhost:${this.#PORT}`);
+    if(process.env.app_state=='dev'){
+      console.log(`run on > http://localhost:${this.#PORT}`);
+    }else{
+      console.log(`run on > https://pelato-markazi.chbk.run`);
+    }
   }
   connectDB() {
     //   handle the connection to mongoose if some thing happens like crash should db close on exit
@@ -39,9 +46,9 @@ class Application {
       process.exit(1);
     });
     // listen on connection and print connected message
-    mongoose.connection.on('connected',(data)=>{
-        console.log('connected to DB')
-    })
+    mongoose.connection.on("connected", (data) => {
+      console.log("connected to DB");
+    });
     // on SIGINT signal exist
     process.on("SIGINT", () => {
       mongoose.connection.close(() => {
@@ -52,14 +59,21 @@ class Application {
   }
   // error handling
   errorHandler() {
-    this.#app.use((err, req, res, next) => {
+    this.#app.use((req, res, next) => {
       next(createHttpError.NotFound("Not Found"));
     });
     this.#app.use((err, req, res, next) => {
       // server err
+      console.log(err)
       const serverError = createHttpError.InternalServerError();
       const statusCode = err.status || serverError.statusCode;
-      const message = err.message || serverError.message;
+      let message
+      if(process.env.app_state=='dev'){
+        message = err.message || serverError.message
+      }else{
+        console.log(err)
+        message = serverError.message
+      }
       res.status(statusCode).json({
         status: statusCode,
         message,
@@ -71,6 +85,6 @@ class Application {
   }
 }
 
-module.exports={
-    Application
-}
+module.exports = {
+  Application,
+};
